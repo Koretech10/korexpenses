@@ -1,10 +1,21 @@
 {
+    "name": "koretech/korexpenses",
+    "description": "Gestion des dépenses personnelles",
+    "version": "0.1.0",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aurélien OUDART",
+            "email": "oudart.aurelien@live.fr",
+            "homepage": "https://github.com/Koretech10",
+            "role": "developer"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/dbal": "^3",
