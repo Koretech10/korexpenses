@@ -1,0 +1,82 @@
+/* STYLES GLOBAUX */
+/******************/
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #ead9f2;
+}
+
+/**********/
+/* NAVBAR */
+/**********/
+
+.navbar {
+    background-color: #572670;
+}
+
+.navbar-shadow {
+    box-shadow: 0 0 15px 3px #572670;
+}
+
+.navbar .dropdown-menu {
+    background-color: #682e85;
+    border: solid 2px #572670;
+}
+
+.navbar .dropdown-item {
+    color: white;
+}
+
+.navbar .dropdown-item:hover {
+    color: #16181b;
+}
+
+.dropdown:hover > .dropdown-menu { /* Affichage du volet au survol */
+    display: block;
+}
+
+.dropdown-menu:hover { /* Volet toujours ouvert si survol */
+    display: block;
+}
+
+/**************/
+/* CONTENEURS */
+/**************/
+
+.title-block {
+    background-color: #572670;
+    margin: 13px 0 0 0;
+    padding: 5px;
+    color: white;
+    width: 100%;
+    border: solid 2px #572670;
+    box-shadow: 0 0 15px 3px #572670;
+    border-bottom: none;
+}
+
+.title-block h4 {
+    margin: 0;
+    font-weight: bold;
+}
+
+.content {
+    border: solid 2px #572670;
+    box-shadow: 0 0 15px 3px #572670;
+    background-color: white;
+    padding: 15px;
+}
+
+.footer {
+    border: solid 2px #572670;
+    padding: 20px 10px;
+    margin: 20px auto;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+    background-color: #572670;
+    box-shadow: 0 0 15px 3px #572670;
+    color: rgba(255,255,255,.7);
+}
