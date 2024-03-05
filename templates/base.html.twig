@@ -1,17 +1,96 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{#    <link rel="icon" type="image/png" href="{{ asset('img/winupdater_logo_100px.png') }}">#}
+    <!-- CSS ici -->
+    {{ encore_entry_link_tags('app') }}
+    {% block stylesheets %}{% endblock %}
+    <!-- ------- -->
+    <title>KorExpenses | {{ block('title') }}</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top navbar-shadow">
+    <a class="navbar-brand" href="/">KorExpenses</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-arrow-left-right"></i> Opérations
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav" style="margin-right: 20px">
+            <li class="nav-item">
+                <span class="nav-link">
+                    <i class="bi bi-person-fill"></i> Bonjour User
+                </span>
+            </li>
+            <li>
+                <a class="nav-link" href="#">
+                    <i class="bi bi-power"></i> Se déconnecter
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container col-lg-12">
+    <div class="title-block">
+        <h4>{% block title %}Titre ici{% endblock %}</h4>
+    </div>
+    <div class="content">
+        <div class="actions-bar">
+            <div class="btn-group" role="group">
+                {% block actions %}Actions ici{% endblock %}
+            </div>
+        </div>
+        <hr />
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} alert-dismissible fade show">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <i class="bi
+                            {% if label == 'success' %}
+                                bi-check-lg
+                            {% elseif label == 'warning' %}
+                                bi-exclamation-triangle-fill
+                            {% elseif label == 'danger' %}
+                                bi-x-circle
+                            {% else %}
+                                bi-chat-right-fill
+                            {% endif %}
+                            "></i> {{ message | raw }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% block body %}
+            <h1>Y'a rien à voir ici, circulez...</h1>
         {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    </div>
+</div>
+<div class="container col-lg-12">
+    <div class="footer row justify-content-center">
+        <div class="col-lg-6 text-left">
+            ©
+            {% if ('now' | date("Y")) == 2024 %}
+                2024
+            {% else %}
+                2024-{{ 'now' | date("Y") }}
+            {% endif %}
+            Koretech
+        </div>
+        <div class="col-lg-6 text-right">
+            v0.1.0
+        </div>
+    </div>
+</div>
+<!-- Javascript ici -->
+{{ encore_entry_script_tags('app') }}
+{% block javascripts %}{% endblock %}
+<!-- -------------- -->
+</body>
 </html>
