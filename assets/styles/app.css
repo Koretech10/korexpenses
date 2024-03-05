@@ -7,7 +7,7 @@ html {
 }
 
 body {
-    background: #ead9f2;
+    background: #ebfff3;
 }
 
 /**********/
@@ -15,16 +15,18 @@ body {
 /**********/
 
 .navbar {
-    background-color: #572670;
+    /*background-color: #572670;*/
+    background-color: #0f612f;
 }
 
 .navbar-shadow {
-    box-shadow: 0 0 15px 3px #572670;
+    /*box-shadow: 0 0 15px 3px #572670;*/
+    box-shadow: 0 0 15px 3px #0f612f;
 }
 
 .navbar .dropdown-menu {
-    background-color: #682e85;
-    border: solid 2px #572670;
+    background-color: #15843f;
+    border: solid 2px #0f612f;
 }
 
 .navbar .dropdown-item {
@@ -48,13 +50,13 @@ body {
 /**************/
 
 .title-block {
-    background-color: #572670;
+    background-color: #0f612f;
     margin: 13px 0 0 0;
     padding: 5px;
     color: white;
     width: 100%;
-    border: solid 2px #572670;
-    box-shadow: 0 0 15px 3px #572670;
+    border: solid 2px #0f612f;
+    box-shadow: 0 0 15px 3px #0f612f;
     border-bottom: none;
 }
 
@@ -64,19 +66,19 @@ body {
 }
 
 .content {
-    border: solid 2px #572670;
-    box-shadow: 0 0 15px 3px #572670;
+    border: solid 2px #0f612f;
+    box-shadow: 0 0 15px 3px #0f612f;
     background-color: white;
     padding: 15px;
 }
 
 .footer {
-    border: solid 2px #572670;
+    border: solid 2px #0f612f;
     padding: 20px 10px;
     margin: 20px auto;
     -ms-word-wrap: break-word;
     word-wrap: break-word;
-    background-color: #572670;
-    box-shadow: 0 0 15px 3px #572670;
+    background-color: #0f612f;
+    box-shadow: 0 0 15px 3px #0f612f;
     color: rgba(255,255,255,.7);
 }
