@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Transaction;
 use App\Form\TransactionType;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,8 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class TransactionController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $em)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $em,
+        private readonly TransactionRepository $transactionRepository
+    ) {
     }
 
     #[Route('/transaction', name: 'transaction_index_or_create')]
@@ -40,8 +43,11 @@ class TransactionController extends AbstractController
             $this->em->flush();
         }
 
+        $transactions = $this->transactionRepository->findAll();
+
         return $this->render('transaction/index_or_create.html.twig', [
-            'newTransactionForm' => $newTransactionForm->createView()
+            'newTransactionForm' => $newTransactionForm->createView(),
+            'transactions' => $transactions
         ]);
     }
 

@@ -15,6 +15,24 @@
                 </tr>
             </thead>
             <tbody>
+            {% for transaction in transactions %}
+            {# @var \App\Entity\Transaction transaction #}
+                <tr>
+                    <td>{{ transaction.date | date('d/m/Y') }}</td>
+                    <td>{{ transaction.description }}</td>
+                    <td class="text-danger">
+                        {% if transaction.type == 0 %}
+                            {{ transaction.value }} €
+                        {% endif %}
+                    </td>
+                    <td class="text-success">
+                        {% if transaction.type == 1 %}
+                            {{ transaction.value }} €
+                        {% endif %}
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            {% endfor %}
                 <tr>
                 {{ form_start(newTransactionForm) }}
                     <td>{{ form_widget(newTransactionForm.date) }}</td>
