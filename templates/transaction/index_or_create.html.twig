@@ -1,7 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block title %}Opérations{% endblock %}
 
 {% block body %}
-
+    <div class="col-12 table-responsive">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Libellé</th>
+                    <th>Débit</th>
+                    <th>Crédit</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                {{ form_start(newTransactionForm) }}
+                    <td>{{ form_widget(newTransactionForm.date) }}</td>
+                    <td>{{ form_widget(newTransactionForm.description) }}</td>
+                    <td>{{ form_widget(newTransactionForm.debit) }}</td>
+                    <td>{{ form_widget(newTransactionForm.credit) }}</td>
+                    <td>{{ form_widget(newTransactionForm.submit) }}</td>
+                {{ form_end(newTransactionForm) }}
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
