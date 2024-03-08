@@ -21,7 +21,7 @@ class TransactionController extends AbstractController
     }
 
     #[Route('/transaction/list', name: 'transaction_list_or_create')]
-    public function listOrCreate(Request $request): Response
+    public function listOrCreate(Request $request): RedirectResponse|Response
     {
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction);
@@ -41,6 +41,8 @@ class TransactionController extends AbstractController
 
             $this->em->persist($transaction);
             $this->em->flush();
+
+            return $this->redirectToRoute('transaction_list_or_create');
         }
 
         $transactions = $this->transactionRepository->findAll();
