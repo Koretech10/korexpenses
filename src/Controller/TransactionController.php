@@ -20,6 +20,11 @@ class TransactionController extends AbstractController
     ) {
     }
 
+    /**
+     * Lister les opérations ou en créer une nouvelle
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
     #[Route('/transaction/list', name: 'transaction_list_or_create')]
     public function listOrCreate(Request $request): RedirectResponse|Response
     {
@@ -32,6 +37,7 @@ class TransactionController extends AbstractController
             $debit = $newTransactionForm['debit']->getData();
             $credit = $newTransactionForm['credit']->getData();
 
+            // Transformation du champ Débit ou Crédit en type d'opération avec une valeur
             if (!is_null($debit)) {
                 $this->transformDebitIntoValue($transaction, $debit);
             }
@@ -53,18 +59,34 @@ class TransactionController extends AbstractController
         ]);
     }
 
+    /**
+     * Éditer l'opération $transaction
+     * @param Transaction $transaction
+     * @return Response
+     */
     #[Route('/transaction/edit/{id}', name: 'transaction_edit', requirements: ["id" => "\d+"])]
     public function edit(Transaction $transaction): Response
     {
         return $this->render('list_or_create.html.twig');
     }
 
+    /**
+     * Supprimer l'opération $transaction
+     * @param Transaction $transaction
+     * @return RedirectResponse
+     */
     #[Route('/transaction/delete/{id}', name: 'transaction_delete', requirements: ["id" => "\d+"])]
     public function delete(Transaction $transaction): RedirectResponse
     {
         return $this->redirectToRoute('transaction_list_or_create');
     }
 
+    /**
+     * Transforme le débit $value en opération de type Débit avec la valeur $value dans l'opération $transaction
+     * @param Transaction $transaction
+     * @param float $value
+     * @return void
+     */
     private function transformDebitIntoValue(Transaction $transaction, float $value): void
     {
         $transaction
@@ -73,6 +95,12 @@ class TransactionController extends AbstractController
         ;
     }
 
+    /**
+     * Transforme le crédit $value en opération de type Crédit avec la valeur $value dans l'opération $transaction
+     * @param Transaction $transaction
+     * @param float $value
+     * @return void
+     */
     private function transformCreditIntoValue(Transaction $transaction, float $value): void
     {
         $transaction
