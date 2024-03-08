@@ -23,6 +23,11 @@ class Transaction
     #[ORM\Column]
     private ?float $value = null;
 
+    /**
+     * 0 = Débit
+     * 1 = Crédit
+     * @var int|null
+     */
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $type = null;
 
