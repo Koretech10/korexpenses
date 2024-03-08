@@ -39,10 +39,22 @@
             {% endfor %}
                 <tr>
                 {{ form_start(newTransactionForm) }}
-                    <td>{{ form_widget(newTransactionForm.date) }}</td>
-                    <td>{{ form_widget(newTransactionForm.description) }}</td>
-                    <td>{{ form_widget(newTransactionForm.debit) }}</td>
-                    <td>{{ form_widget(newTransactionForm.credit) }}</td>
+                    <td>
+                        {{ form_widget(newTransactionForm.date) }}
+                        {{ form_errors(newTransactionForm.date) }}
+                    </td>
+                    <td>
+                        {{ form_widget(newTransactionForm.description) }}
+                        {{ form_errors(newTransactionForm.description) }}
+                    </td>
+                    <td>
+                        {{ form_widget(newTransactionForm.debit) }}
+                        {{ form_errors(newTransactionForm.debit) }}
+                    </td>
+                    <td>
+                        {{ form_widget(newTransactionForm.credit) }}
+                        {{ form_errors(newTransactionForm.credit) }}
+                    </td>
                     <td>{{ form_widget(newTransactionForm.submit) }}</td>
                 {{ form_end(newTransactionForm) }}
                 </tr>
