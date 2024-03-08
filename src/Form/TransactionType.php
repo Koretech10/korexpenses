@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Transaction;
+use App\Validator\IsDebitOrCreditFilled;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -44,6 +45,7 @@ class TransactionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Transaction::class,
+            'constraints' => new IsDebitOrCreditFilled()
         ]);
     }
 }
