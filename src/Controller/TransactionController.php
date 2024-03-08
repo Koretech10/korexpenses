@@ -62,12 +62,43 @@ class TransactionController extends AbstractController
     /**
      * Éditer l'opération $transaction
      * @param Transaction $transaction
-     * @return Response
+     * @param Request $request
+     * @return RedirectResponse|Response
      */
     #[Route('/transaction/edit/{id}', name: 'transaction_edit', requirements: ["id" => "\d+"])]
-    public function edit(Transaction $transaction): Response
+    public function edit(Transaction $transaction, Request $request): RedirectResponse|Response
     {
-        return $this->render('list_or_create.html.twig');
+        $transactionForm = $this->createForm(TransactionType::class, $transaction);
+        $transactionForm->handleRequest($request);
+
+        if ($transactionForm->isSubmitted() && $transactionForm->isValid()) {
+            $transaction = $transactionForm->getData();
+            $debit = $transactionForm['debit']->getData();
+            $credit = $transactionForm['credit']->getData();
+
+            // Transformation du champ Débit ou Crédit en type d'opération avec une valeur
+            if (!is_null($debit)) {
+                $this->transformDebitIntoValue($transaction, $debit);
+            }
+            if (!is_null($credit)) {
+                $this->transformCreditIntoValue($transaction, $credit);
+            }
+
+            $this->em->flush();
+
+            return $this->redirectToRoute('transaction_list_or_create');
+        } elseif (!$transactionForm->isSubmitted()) {
+            // Transformation à ne faire que si le formulaire n'a pas encore été renvoyé
+            if ($transaction->getType() === 0) { // Valeur de l'opération dans le champ Débit
+                $transactionForm->get('debit')->setData($transaction->getValue());
+            } else { // Valeur de l'opération dans le champ Crédit
+                $transactionForm->get('credit')->setData($transaction->getValue());
+            }
+        }
+
+        return $this->render('transaction/edit.html.twig', [
+            'transactionForm' => $transactionForm->createView()
+        ]);
     }
 
     /**

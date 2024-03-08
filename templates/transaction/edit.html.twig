@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Opérations / Édition{% endblock %}
+
+{% block actions %}
+    <a
+        class="btn btn-light"
+        href="{{ path('transaction_list_or_create') }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Retour vers Opérations"
+    >
+        <i class="bi bi-arrow-left"></i>
+    </a>
+{% endblock %}
+
+{% block body %}
+    {{ form(transactionForm) }}
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
