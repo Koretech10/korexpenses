@@ -19,7 +19,11 @@
             {# @var \App\Entity\Transaction transaction #}
                 <tr>
                     <td>{{ transaction.date | date('d/m/Y') }}</td>
-                    <td>{{ transaction.description }}</td>
+                    <td>
+                        <a href="{{ path('transaction_edit', {'id': transaction.id}) }}">
+                            {{ transaction.description }}
+                        </a>
+                    </td>
                     <td class="text-danger">
                         {% if transaction.type == 0 %}
                             {{ transaction.value }} €

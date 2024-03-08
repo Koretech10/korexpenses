@@ -20,7 +20,7 @@ class TransactionController extends AbstractController
     ) {
     }
 
-    #[Route('/transaction', name: 'transaction_index_or_create')]
+    #[Route('/transaction/list', name: 'transaction_list_or_create')]
     public function listOrCreate(Request $request): Response
     {
         $transaction = new Transaction();
@@ -45,7 +45,7 @@ class TransactionController extends AbstractController
 
         $transactions = $this->transactionRepository->findAll();
 
-        return $this->render('transaction/index_or_create.html.twig', [
+        return $this->render('transaction/list_or_create.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
             'transactions' => $transactions
         ]);
@@ -54,13 +54,13 @@ class TransactionController extends AbstractController
     #[Route('/transaction/edit/{id}', name: 'transaction_edit', requirements: ["id" => "\d+"])]
     public function edit(Transaction $transaction): Response
     {
-        return $this->render('transaction/index_or_create.html.twig');
+        return $this->render('list_or_create.html.twig');
     }
 
     #[Route('/transaction/delete/{id}', name: 'transaction_delete', requirements: ["id" => "\d+"])]
     public function delete(Transaction $transaction): RedirectResponse
     {
-        return $this->redirectToRoute('transaction_index_or_create');
+        return $this->redirectToRoute('transaction_list_or_create');
     }
 
     private function transformDebitIntoValue(Transaction $transaction, float $value): void
