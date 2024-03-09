@@ -97,7 +97,8 @@ class TransactionController extends AbstractController
         }
 
         return $this->render('transaction/edit.html.twig', [
-            'transactionForm' => $transactionForm->createView()
+            'transactionForm' => $transactionForm->createView(),
+            'transaction' => $transaction
         ]);
     }
 
@@ -109,6 +110,9 @@ class TransactionController extends AbstractController
     #[Route('/transaction/delete/{id}', name: 'transaction_delete', requirements: ["id" => "\d+"])]
     public function delete(Transaction $transaction): RedirectResponse
     {
+        $this->em->remove($transaction);
+        $this->em->flush();
+
         return $this->redirectToRoute('transaction_list_or_create');
     }
 
