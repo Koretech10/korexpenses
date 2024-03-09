@@ -55,6 +55,7 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         {% endblock %}
         {% block modalBody %}
+            {% form_theme newTransactionForm 'bootstrap_4_layout.html.twig' %}
             {{ form(newTransactionForm) }}
         {% endblock %}
         {% block modalFooter %}
