@@ -17,9 +17,7 @@
                 <tr>
                     <th>Date</th>
                     <th>Libellé</th>
-                    <th>Débit</th>
-                    <th>Crédit</th>
-                    <th>&nbsp;</th>
+                    <th>Valeur</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,17 +30,15 @@
                             {{ transaction.description }}
                         </a>
                     </td>
-                    <td class="text-danger">
-                        {% if transaction.type == 0 %}
-                            {{ transaction.value }} €
-                        {% endif %}
+                    {% if transaction.type == 0 %}
+                    <td class="text-danger text-nowrap">
+                        - {{ transaction.value }} €
                     </td>
-                    <td class="text-success">
-                        {% if transaction.type == 1 %}
-                            {{ transaction.value }} €
-                        {% endif %}
+                    {% else %}
+                    <td class="text-success text-nowrap">
+                        + {{ transaction.value }} €
                     </td>
-                    <td>&nbsp;</td>
+                    {% endif %}
                 </tr>
             {% endfor %}
             </tbody>
