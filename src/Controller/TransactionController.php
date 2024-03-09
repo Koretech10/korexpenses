@@ -34,16 +34,6 @@ class TransactionController extends AbstractController
 
         if ($newTransactionForm->isSubmitted() && $newTransactionForm->isValid()) {
             $transaction = $newTransactionForm->getData();
-            $debit = $newTransactionForm['debit']->getData();
-            $credit = $newTransactionForm['credit']->getData();
-
-            // Transformation du champ Débit ou Crédit en type d'opération avec une valeur
-            if (!is_null($debit)) {
-                $this->transformDebitIntoValue($transaction, $debit);
-            }
-            if (!is_null($credit)) {
-                $this->transformCreditIntoValue($transaction, $credit);
-            }
 
             $this->em->persist($transaction);
             $this->em->flush();
@@ -73,27 +63,10 @@ class TransactionController extends AbstractController
 
         if ($transactionForm->isSubmitted() && $transactionForm->isValid()) {
             $transaction = $transactionForm->getData();
-            $debit = $transactionForm['debit']->getData();
-            $credit = $transactionForm['credit']->getData();
-
-            // Transformation du champ Débit ou Crédit en type d'opération avec une valeur
-            if (!is_null($debit)) {
-                $this->transformDebitIntoValue($transaction, $debit);
-            }
-            if (!is_null($credit)) {
-                $this->transformCreditIntoValue($transaction, $credit);
-            }
 
             $this->em->flush();
 
             return $this->redirectToRoute('transaction_list_or_create');
-        } elseif (!$transactionForm->isSubmitted()) {
-            // Transformation à ne faire que si le formulaire n'a pas encore été renvoyé
-            if ($transaction->getType() === 0) { // Valeur de l'opération dans le champ Débit
-                $transactionForm->get('debit')->setData($transaction->getValue());
-            } else { // Valeur de l'opération dans le champ Crédit
-                $transactionForm->get('credit')->setData($transaction->getValue());
-            }
         }
 
         return $this->render('transaction/edit.html.twig', [
@@ -114,33 +87,5 @@ class TransactionController extends AbstractController
         $this->em->flush();
 
         return $this->redirectToRoute('transaction_list_or_create');
-    }
-
-    /**
-     * Transforme le débit $value en opération de type Débit avec la valeur $value dans l'opération $transaction
-     * @param Transaction $transaction
-     * @param float $value
-     * @return void
-     */
-    private function transformDebitIntoValue(Transaction $transaction, float $value): void
-    {
-        $transaction
-            ->setType(0)
-            ->setValue($value)
-        ;
-    }
-
-    /**
-     * Transforme le crédit $value en opération de type Crédit avec la valeur $value dans l'opération $transaction
-     * @param Transaction $transaction
-     * @param float $value
-     * @return void
-     */
-    private function transformCreditIntoValue(Transaction $transaction, float $value): void
-    {
-        $transaction
-            ->setType(1)
-            ->setValue($value)
-        ;
     }
 }

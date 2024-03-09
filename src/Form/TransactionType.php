@@ -3,8 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Transaction;
-use App\Validator\IsDebitOrCreditFilled;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,6 +16,8 @@ class TransactionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $transaction = $builder->getData();
+
         $builder
             ->add('date', DateType::class, [
                 'label' => 'Date',
@@ -24,16 +26,19 @@ class TransactionType extends AbstractType
             ->add('description', TextType::class, [
                 'label' => 'Libellé'
             ])
-            ->add('debit', MoneyType::class, [
-                'label' => 'Débit',
-                'currency' => 'EUR',
-                'mapped' => false,
-                'required' => false
+            ->add('type', ChoiceType::class, [
+                'label' => 'Type',
+                'multiple' => false,
+                'expanded' => true,
+                'choices' => [
+                    'Débit' => 0,
+                    'Crédit' => 1
+                ],
+                // Choix par défaut à la création uniquement
+                'data' => $transaction->getType() ?? 0
             ])
-            ->add('credit', MoneyType::class, [
-                'label' => "Crédit",
-                'mapped' => false,
-                'required' => false
+            ->add('value', MoneyType::class, [
+                'label' => 'Valeur'
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider'
@@ -44,8 +49,7 @@ class TransactionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Transaction::class,
-            'constraints' => new IsDebitOrCreditFilled()
+            'data_class' => Transaction::class
         ]);
     }
 }
