@@ -6,6 +6,7 @@ use App\Entity\Transaction;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +24,12 @@ class TransactionController extends AbstractController
     /**
      * Lister les opérations ou en créer une nouvelle
      * @param Request $request
+     * @param PaginatorInterface $pager
+     * @param int $page
      * @return RedirectResponse|Response
      */
-    #[Route('/transaction/list', name: 'transaction_list_or_create')]
-    public function listOrCreate(Request $request): RedirectResponse|Response
+    #[Route('/transaction/list/{page}', name: 'transaction_list_or_create', requirements: ["page" => "\d+"])]
+    public function listOrCreate(Request $request, PaginatorInterface $pager, int $page = 1): RedirectResponse|Response
     {
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction);
@@ -41,11 +44,15 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('transaction_list_or_create');
         }
 
-        $transactions = $this->transactionRepository->findAll();
+        $pagination = $pager->paginate(
+            $this->transactionRepository->getAllTransactions(),
+            $page,
+            2
+        );
 
         return $this->render('transaction/list_or_create.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
-            'transactions' => $transactions
+            'pagination' => $pagination
         ]);
     }
 
