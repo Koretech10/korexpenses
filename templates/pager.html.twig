@@ -1,0 +1,15 @@
+<div class="col-12 d-flex justify-content-center">
+    {# Ne s'affiche que s'il y a besoin de paginer #}
+    {{ knp_pagination_render(pagination) }}
+</div>
+<div class="col-12 d-flex justify-content-center">
+    <p>
+        {% if pagination.totalItemCount == 1 %}
+            Résultat 1 à 1 sur 1 entrée
+        {% else %}
+            {% set pageStartsAt = (pagination.itemNumberPerPage * pagination.currentPageNumber) - (pagination.itemNumberPerPage - 1) %}
+            {% set pageEndsAt = pageStartsAt + (pagination.items | length) - 1 %}
+            Résultats {{ pageStartsAt }} à {{ pageEndsAt }} sur {{ pagination.totalItemCount }} entrées
+        {% endif %}
+    </p>
+</div>
