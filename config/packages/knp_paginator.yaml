@@ -1,5 +1,5 @@
 knp_paginator:
-  page_range: 5                      # default page range used in pagination control
+  page_range: 3                      # default page range used in pagination control
   page_limit: 100                    # page limit for pagination control; to disable set this field to ~ (null)
   convert_exception: false           # convert paginator exception (e.g. non-positive page and/or limit) into 404 error
   default_options:
