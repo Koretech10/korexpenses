@@ -47,7 +47,7 @@ class TransactionController extends AbstractController
         $pagination = $pager->paginate(
             $this->transactionRepository->getAllTransactions(),
             $page,
-            2
+            100
         );
 
         return $this->render('transaction/list_or_create.html.twig', [
