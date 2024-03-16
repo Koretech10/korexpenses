@@ -11,6 +11,31 @@
 {% endblock %}
 
 {% block body %}
+    <div class="row">
+        <div class="col-6 d-flex justify-content-start">
+            <a href="{{ path('transaction_list', {
+                'year': previousMonth | date('Y'),
+                'month': previousMonth | date('m')
+            }) }}">
+                <i class="bi bi-arrow-left"></i>
+                {{ previousMonth | format_datetime(pattern='MMMM yyyy', locale='fr') | capitalize }}
+            </a>
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+            <a href="{{ path('transaction_list', {
+                'year': nextMonth | date('Y'),
+                'month': nextMonth | date('m')
+            }) }}">
+                {{ nextMonth | format_datetime(pattern='MMMM yyyy', locale='fr') | capitalize }}
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <h1 class="text-center">
+                {{ currentMonth | format_datetime(pattern='MMMM yyyy', locale='fr') | capitalize }}
+            </h1>
+        </div>
+    </div>
     {% embed 'pager.html.twig' %}{% endembed %}
     <div class="col-12 table-responsive">
         <table class="table table-striped table-hover">
