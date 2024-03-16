@@ -33,4 +33,20 @@ class TransactionRepository extends ServiceEntityRepository
             ->orderBy('t.date')
         ;
     }
+
+    /**
+     * Retourne toutes les opérations du mois de $month $year triées par date
+     * @param int $year
+     * @param string $month
+     * @return QueryBuilder
+     */
+    public function getAllTransactionsForMonth(int $year, string $month): QueryBuilder
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->where("t.date LIKE :month")
+            ->setParameter('month', "$year-$month-%")
+            ->orderBy('t.date')
+        ;
+    }
 }

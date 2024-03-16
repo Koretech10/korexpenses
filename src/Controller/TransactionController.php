@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Transaction;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,12 +25,23 @@ class TransactionController extends AbstractController
     /**
      * Lister les opérations
      * @param PaginatorInterface $pager
+     * @param int $year
+     * @param string $month
      * @param int $page
-     * @return RedirectResponse|Response
+     * @return Response
      */
-    #[Route('/transaction/list/{page}', name: 'transaction_list', requirements: ["page" => "\d+"])]
-    public function list(PaginatorInterface $pager, int $page = 1): RedirectResponse|Response
+    #[Route('/transaction/list/{year}/{month}/{page}', name: 'transaction_list', requirements: [
+        "year" => "\d{4}",
+        "month" => "[01]\d",
+        "page" => "\d+",
+    ])]
+    public function list(PaginatorInterface $pager, int $year, string $month, int $page = 1): Response
     {
+        // Définition du mois précédent et du mois suivant
+        $currentMonth = new DateTimeImmutable("$year-$month-01");
+        $nextMonth = $currentMonth->modify('+ 1 month');
+        $previousMonth = $currentMonth->modify('- 1 month');
+
         // Formulaire de création d'opération
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
@@ -38,14 +50,17 @@ class TransactionController extends AbstractController
 
         // Pagination des opérations demandées
         $pagination = $pager->paginate(
-            $this->transactionRepository->getAllTransactions(),
+            $this->transactionRepository->getAllTransactionsForMonth($year, $month),
             $page,
             100
         );
 
         return $this->render('transaction/list.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'currentMonth' => $currentMonth,
+            'previousMonth' => $previousMonth,
+            'nextMonth' => $nextMonth
         ]);
     }
 
