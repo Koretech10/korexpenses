@@ -6,6 +6,8 @@
     <p>
         {% if pagination.totalItemCount == 1 %}
             Résultat 1 à 1 sur 1 entrée
+        {% elseif pagination.totalItemCount == 0 %}
+            Aucun résultats
         {% else %}
             {% set pageStartsAt = (pagination.itemNumberPerPage * pagination.currentPageNumber) - (pagination.itemNumberPerPage - 1) %}
             {% set pageEndsAt = pageStartsAt + (pagination.items | length) - 1 %}
