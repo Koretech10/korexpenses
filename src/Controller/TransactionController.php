@@ -31,12 +31,14 @@ class TransactionController extends AbstractController
     #[Route('/transaction/list/{page}', name: 'transaction_list', requirements: ["page" => "\d+"])]
     public function list(Request $request, PaginatorInterface $pager, int $page = 1): RedirectResponse|Response
     {
+        // Formulaire de création d'opération
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
             'target_url' => $this->generateUrl('transaction_create')
         ]);
         $newTransactionForm->handleRequest($request);
 
+        // Pagination des opérations demandées
         $pagination = $pager->paginate(
             $this->transactionRepository->getAllTransactions(),
             $page,
@@ -57,6 +59,7 @@ class TransactionController extends AbstractController
     #[Route('transaction/create', name: 'transaction_create')]
     public function create(Request $request): RedirectResponse
     {
+        // Récupération du formulaire de création
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
             'target_url' => $this->generateUrl('transaction_create')
