@@ -86,7 +86,10 @@ class TransactionController extends AbstractController
             $this->em->flush();
         }
 
-        return $this->redirectToRoute('transaction_list');
+        return $this->redirectToRoute('transaction_list', [
+            'year' => $transaction->getDate()->format('Y'),
+            'month' => $transaction->getDate()->format('m')
+        ]);
     }
 
     /**
@@ -102,11 +105,15 @@ class TransactionController extends AbstractController
         $transactionForm->handleRequest($request);
 
         if ($transactionForm->isSubmitted() && $transactionForm->isValid()) {
+            /** @var Transaction $transaction */
             $transaction = $transactionForm->getData();
 
             $this->em->flush();
 
-            return $this->redirectToRoute('transaction_list');
+            return $this->redirectToRoute('transaction_list', [
+                'year' => $transaction->getDate()->format('Y'),
+                'month' => $transaction->getDate()->format('m')
+            ]);
         }
 
         return $this->render('transaction/edit.html.twig', [
@@ -123,9 +130,14 @@ class TransactionController extends AbstractController
     #[Route('/transaction/delete/{id}', name: 'transaction_delete', requirements: ["id" => "\d+"])]
     public function delete(Transaction $transaction): RedirectResponse
     {
+        $date = $transaction->getDate();
+
         $this->em->remove($transaction);
         $this->em->flush();
 
-        return $this->redirectToRoute('transaction_list');
+        return $this->redirectToRoute('transaction_list', [
+            'year' => $date->format('Y'),
+            'month' => $date->format('m')
+        ]);
     }
 }

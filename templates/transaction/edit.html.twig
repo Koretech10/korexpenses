@@ -5,7 +5,10 @@
 {% block actions %}
     <a
         class="btn btn-light"
-        href="{{ path('transaction_list') }}"
+        href="{{ path('transaction_list', {
+            'year': transaction.date | date('Y'),
+            'month': transaction.date | date('m')
+        }) }}"
         data-toggle="tooltip"
         data-placement="bottom"
         title="Retour vers Opérations"
