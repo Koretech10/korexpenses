@@ -22,27 +22,20 @@ class TransactionController extends AbstractController
     }
 
     /**
-     * Lister les opérations ou en créer une nouvelle
+     * Lister les opérations
      * @param Request $request
      * @param PaginatorInterface $pager
      * @param int $page
      * @return RedirectResponse|Response
      */
-    #[Route('/transaction/list/{page}', name: 'transaction_list_or_create', requirements: ["page" => "\d+"])]
-    public function listOrCreate(Request $request, PaginatorInterface $pager, int $page = 1): RedirectResponse|Response
+    #[Route('/transaction/list/{page}', name: 'transaction_list', requirements: ["page" => "\d+"])]
+    public function list(Request $request, PaginatorInterface $pager, int $page = 1): RedirectResponse|Response
     {
         $transaction = new Transaction();
-        $newTransactionForm = $this->createForm(TransactionType::class, $transaction);
+        $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
+            'target_url' => $this->generateUrl('transaction_create')
+        ]);
         $newTransactionForm->handleRequest($request);
-
-        if ($newTransactionForm->isSubmitted() && $newTransactionForm->isValid()) {
-            $transaction = $newTransactionForm->getData();
-
-            $this->em->persist($transaction);
-            $this->em->flush();
-
-            return $this->redirectToRoute('transaction_list_or_create');
-        }
 
         $pagination = $pager->paginate(
             $this->transactionRepository->getAllTransactions(),
@@ -50,10 +43,34 @@ class TransactionController extends AbstractController
             100
         );
 
-        return $this->render('transaction/list_or_create.html.twig', [
+        return $this->render('transaction/list.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
             'pagination' => $pagination
         ]);
+    }
+
+    /**
+     * Créer une nouvelle opération
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    #[Route('transaction/create', name: 'transaction_create')]
+    public function create(Request $request): RedirectResponse
+    {
+        $transaction = new Transaction();
+        $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
+            'target_url' => $this->generateUrl('transaction_create')
+        ]);
+        $newTransactionForm->handleRequest($request);
+
+        if ($newTransactionForm->isSubmitted() && $newTransactionForm->isValid()) {
+            $transaction = $newTransactionForm->getData();
+
+            $this->em->persist($transaction);
+            $this->em->flush();
+        }
+
+        return $this->redirectToRoute('transaction_list');
     }
 
     /**
@@ -73,7 +90,7 @@ class TransactionController extends AbstractController
 
             $this->em->flush();
 
-            return $this->redirectToRoute('transaction_list_or_create');
+            return $this->redirectToRoute('transaction_list');
         }
 
         return $this->render('transaction/edit.html.twig', [
@@ -93,6 +110,6 @@ class TransactionController extends AbstractController
         $this->em->remove($transaction);
         $this->em->flush();
 
-        return $this->redirectToRoute('transaction_list_or_create');
+        return $this->redirectToRoute('transaction_list');
     }
 }
