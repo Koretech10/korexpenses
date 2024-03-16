@@ -19,6 +19,7 @@ class TransactionType extends AbstractType
         $transaction = $builder->getData();
 
         $builder
+            ->setAction($options['target_url'])
             ->add('date', DateType::class, [
                 'label' => 'Date',
                 'widget' => 'single_text'
@@ -48,8 +49,11 @@ class TransactionType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Transaction::class
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => Transaction::class,
+                'target_url' => ""
+            ])
+        ;
     }
 }
