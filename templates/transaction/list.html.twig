@@ -8,6 +8,11 @@
             <i class="bi bi-plus"></i>
         </button>
     </div>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Sélectionner un mois">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#monthSelectorModal">
+            <i class="bi bi-calendar"></i>
+        </button>
+    </div>
 {% endblock %}
 
 {% block body %}
@@ -71,6 +76,8 @@
         </table>
     </div>
     {% embed "pager.html.twig" %}{% endembed %}
+
+    {# Modal de création d'opération #}
     {% embed 'modals/generic.html.twig' %}
         {% block modalId %}createModal{% endblock %}
         {% block modalHeader %}
@@ -87,4 +94,73 @@
             </button>
         {% endblock %}
     {% endembed %}
+
+    {# Modal de sélection de mois #}
+    {% embed 'modals/generic.html.twig' %}
+        {% block modalId %}monthSelectorModal{% endblock %}
+        {% block modalHeader %}
+            <h4 class="modal-title">Changer de mois</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        {% endblock %}
+        {% block modalBody %}
+            <form name="date_selector" onSubmit="return redirectToListMonth();">
+                <div id="date_selector">
+                    <div class="form-group">
+                        <input
+                            type="date"
+                            id="date_selector_date"
+                            name="date_selector[date]"
+                            required="required"
+                            class="form-control"
+                        >
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button
+                                type="submit"
+                                id="date_selector_submit"
+                                name="date_selector[submit]"
+                                class="btn-primary btn"
+                            >
+                                Valider
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endblock %}
+        {% block modalFooter %}
+            <button type="button" class="btn btn-light" data-dismiss="modal">
+                <i class="bi bi-arrow-left"></i> Retour
+            </button>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function redirectToListMonth() {
+            // Générer l'URL qui sera modifiée
+            let url = "{{ path('transaction_list', {
+                'year': 1970,
+                'month': '01'
+            }) }}";
+            // Récupérer et splitter la valeur du champ date
+            // monthSelection = [
+            //     0 => 'année',
+            //     1 => 'mois',
+            //     2 => 'jour'
+            // ]
+            let monthSelection = document.getElementById('date_selector_date').value.split('-');
+
+            // Modification de l'URL avec le mois et l'année choisis
+            url = url.replace('1970/01', monthSelection[0] + '/' + monthSelection[1])
+
+            // Redirection
+            window.location.href = url;
+
+            // Ne pas soumettre le formulaire
+            return false;
+        }
+    </script>
 {% endblock %}
