@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form\Search;
+namespace App\Form\Filter;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

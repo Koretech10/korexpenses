@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Transaction;
-use App\Form\Search\TransactionFilterType;
+use App\Form\Filter\TransactionFilterType;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
 use DateTimeImmutable;
