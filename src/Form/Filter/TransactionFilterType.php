@@ -16,6 +16,7 @@ class TransactionFilterType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->setAction($options['target_url'])
             ->add('dateFrom', DateType::class, [
                 'label' => false,
                 'widget' => 'single_text',
@@ -38,8 +39,7 @@ class TransactionFilterType extends AbstractType
                     'Débit' => 0,
                     'Crédit' => 1
                 ],
-                'placeholder' => 'Sans préférence',
-                'empty_data' => '',
+                'empty_data' => [],
                 'required' => false
             ])
             ->add('valueFrom', MoneyType::class, [
@@ -59,8 +59,7 @@ class TransactionFilterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefaults([
-            ])
+            ->setRequired('target_url')
         ;
     }
 }

@@ -50,7 +50,12 @@ class TransactionController extends AbstractController
         ]);
 
         // Formulaire de filtrage
-        $filterForm = $this->createForm(TransactionFilterType::class);
+        $filterForm = $this->createForm(TransactionFilterType::class, null, [
+            'target_url' => $this->generateUrl('transaction_list', [
+                'year' => 2024,
+                'month' => '01'
+            ])
+        ]);
 
         // Pagination des opérations demandées
         $pagination = $pager->paginate(
