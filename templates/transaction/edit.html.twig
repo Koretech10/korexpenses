@@ -23,6 +23,7 @@
 {% endblock %}
 
 {% block body %}
+    {% form_theme transactionForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
     {{ form(transactionForm) }}
     {% embed 'modals/delete.html.twig' %}
         {% block deleteModalId %}deleteModal{% endblock %}
