@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Transaction;
+use App\Form\Search\TransactionFilterType;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
 use DateTimeImmutable;
@@ -48,6 +49,9 @@ class TransactionController extends AbstractController
             'target_url' => $this->generateUrl('transaction_create')
         ]);
 
+        // Formulaire de filtrage
+        $filterForm = $this->createForm(TransactionFilterType::class);
+
         // Pagination des opérations demandées
         $pagination = $pager->paginate(
             $this->transactionRepository->getAllTransactionsForMonth($year, $month),
@@ -60,7 +64,8 @@ class TransactionController extends AbstractController
             'pagination' => $pagination,
             'currentMonth' => $currentMonth,
             'previousMonth' => $previousMonth,
-            'nextMonth' => $nextMonth
+            'nextMonth' => $nextMonth,
+            'filterForm' => $filterForm->createView()
         ]);
     }
 

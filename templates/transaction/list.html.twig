@@ -8,6 +8,11 @@
             <i class="bi bi-plus"></i>
         </button>
     </div>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Filtrer">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#filterModal">
+            <i class="bi bi-funnel"></i>
+        </button>
+    </div>
     <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Sélectionner un mois">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#monthSelectorModal">
             <i class="bi bi-calendar"></i>
@@ -92,6 +97,59 @@
             <button type="button" class="btn btn-light" data-dismiss="modal">
                 <i class="bi bi-arrow-left"></i> Retour
             </button>
+        {% endblock %}
+    {% endembed %}
+
+    {# Modal de filtrage #}
+    {% embed 'modals/filter.html.twig' %}
+        {% block filterModalId %}filterModal{% endblock %}
+        {% block filterModalBody %}
+            {% form_theme filterForm 'bootstrap_4_layout.html.twig' %}
+            {{ form_start(filterForm) }}
+            <div class="form-group">
+                <label>Date de l'opération</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Entre le</label>
+                    </div>
+                    <div class="col-6">
+                        <label>et le</label>
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.dateFrom) }}
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.dateTo) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_row(filterForm.description) }}
+            {{ form_row(filterForm.type) }}
+            <div class="form-group">
+                <label>Valeur de l'opération</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Entre</label>
+                    </div>
+                    <div class="col-6">
+                        <label>et</label>
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.valueFrom) }}
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.valueTo) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_rest(filterForm) }}
+            {{ form_end(filterForm) }}
+        {% endblock %}
+        {% block filterModalCancelPath %}
+            {{ path('transaction_list', {
+                'year': 'now' | date('Y'),
+                'month': 'now' | date('m')
+            }) }}
         {% endblock %}
     {% endembed %}
 
