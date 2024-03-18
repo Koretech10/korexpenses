@@ -49,4 +49,63 @@ class TransactionRepository extends ServiceEntityRepository
             ->orderBy('t.date')
         ;
     }
+
+    /**
+     * Retourne les opérations filtrées selon la requête $filterQuery
+     * @param array $filterQuery
+     * @return QueryBuilder
+     */
+    public function filterTransactions(array $filterQuery): QueryBuilder
+    {
+        $query = $this
+            ->createQueryBuilder('t')
+            ->where('t.description LIKE :description')
+            ->setParameter('description', '%' . $filterQuery['description'] . '%')
+        ;
+
+        // Si l'intervalle de début de date d'opération est renseigné
+        if ($filterQuery['dateFrom'] !== null) {
+            $query
+                ->andWhere(':dateFrom <= t.date')
+                ->setParameter('dateFrom', $filterQuery['dateFrom'])
+            ;
+        }
+
+        // Si l'intervalle de fin de date d'opération est renseigné
+        if ($filterQuery['dateTo'] !== null) {
+            $query
+                ->andWhere('t.date <= :dateTo')
+                ->setParameter('dateTo', $filterQuery['dateTo'])
+            ;
+        }
+
+        // Si au moins un type d'opération a été coché
+        if ($filterQuery['type'] !== []) {
+            $query
+                ->andWhere('t.type IN (:types)')
+                ->setParameter('types', $filterQuery['type'])
+            ;
+        }
+
+        // Si l'intervalle de début de valeur d'opération est renseigné
+        if ($filterQuery['valueFrom'] !== null) {
+            $query
+                ->andWhere(':valueFrom <= t.value')
+                ->setParameter('valueFrom', $filterQuery['valueFrom'])
+            ;
+        }
+
+        // Si l'intervalle de fin de valeur d'opération est renseigné
+        if ($filterQuery['valueTo'] !== null) {
+            $query
+                ->andWhere('t.value <= :valueTo')
+                ->setParameter('valueTo', $filterQuery['valueTo'])
+            ;
+        }
+
+        return $query
+            ->orderBy('t.date', 'DESC')
+            ->addOrderBy('t.id', 'DESC')
+        ;
+    }
 }
