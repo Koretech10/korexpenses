@@ -1,0 +1,7 @@
+{% extends 'bootstrap_4_horizontal_layout.html.twig' %}
+
+{% block submit_widget %}
+    {# Utilise la classe btn-success plutôt que btn-primary #}
+    {%- set attr = attr|merge({class: (attr.class|default('btn-success'))|trim}) -%}
+    {{- parent() -}}
+{% endblock %}
