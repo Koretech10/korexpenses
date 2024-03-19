@@ -18,6 +18,7 @@ class TransactionFilterType extends AbstractType
     {
         $builder
             ->setAction($options['target_url'])
+            ->setMethod('GET')
             ->add('dateFrom', DateType::class, [
                 'label' => false,
                 'widget' => 'single_text',
