@@ -80,6 +80,37 @@ class TransactionController extends AbstractController
     #[Route('/transaction/filter/{page}', name: 'transaction_filter', requirements: ["page" => "\d+"])]
     public function filter(Request $request, int $page = 1): Response|RedirectResponse
     {
+        // Formulaire de filtrage
+        $filterForm = $this->createForm(TransactionFilterType::class, null, [
+            'target_url' => $this->generateUrl('transaction_filter')
+        ]);
+        $filterForm->handleRequest($request);
+
+        // Initialisation de la pagination si formulaire non valide
+        $pagination = $this->pager->paginate([], $page, 100);
+
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $filterQuery = $filterForm->getData();
+
+            // Pagination des opérations demandées
+            $pagination = $this->pager->paginate(
+                $this->transactionRepository->filterTransactions($filterQuery),
+                $page,
+                100
+            );
+        }
+
+        // Formulaire de création d'opération
+        $transaction = new Transaction();
+        $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
+            'target_url' => $this->generateUrl('transaction_create')
+        ]);
+
+        return $this->render('transaction/filter.html.twig', [
+            'pagination' => $pagination,
+            'filterForm' => $filterForm->createView(),
+            'newTransactionForm' => $newTransactionForm->createView()
+        ]);
     }
 
     /**
