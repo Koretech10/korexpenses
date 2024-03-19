@@ -115,9 +115,11 @@
                     </div>
                     <div class="col-6">
                         {{ form_widget(filterForm.dateFrom) }}
+                        {{ form_errors(filterForm.dateFrom) }}
                     </div>
                     <div class="col-6">
                         {{ form_widget(filterForm.dateTo) }}
+                        {{ form_errors(filterForm.dateTo) }}
                     </div>
                 </div>
             </div>
@@ -134,9 +136,11 @@
                     </div>
                     <div class="col-6">
                         {{ form_widget(filterForm.valueFrom) }}
+                        {{ form_errors(filterForm.valueFrom) }}
                     </div>
                     <div class="col-6">
                         {{ form_widget(filterForm.valueTo) }}
+                        {{ form_errors(filterForm.valueTo) }}
                     </div>
                 </div>
             </div>
