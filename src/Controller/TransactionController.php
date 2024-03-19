@@ -19,13 +19,13 @@ class TransactionController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly TransactionRepository $transactionRepository
+        private readonly TransactionRepository $transactionRepository,
+        private readonly PaginatorInterface $pager
     ) {
     }
 
     /**
      * Lister les opérations
-     * @param PaginatorInterface $pager
      * @param int $year
      * @param string $month
      * @param int $page
@@ -36,7 +36,7 @@ class TransactionController extends AbstractController
         "month" => "[01]\d",
         "page" => "\d+",
     ])]
-    public function list(PaginatorInterface $pager, int $year, string $month, int $page = 1): Response
+    public function list(int $year, string $month, int $page = 1): Response
     {
         // Définition du mois précédent et du mois suivant
         $currentMonth = new DateTimeImmutable("$year-$month-01");
@@ -55,7 +55,7 @@ class TransactionController extends AbstractController
         ]);
 
         // Pagination des opérations demandées
-        $pagination = $pager->paginate(
+        $pagination = $this->pager->paginate(
             $this->transactionRepository->getAllTransactionsForMonth($year, $month),
             $page,
             100
