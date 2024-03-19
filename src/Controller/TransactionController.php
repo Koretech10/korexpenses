@@ -86,8 +86,9 @@ class TransactionController extends AbstractController
         ]);
         $filterForm->handleRequest($request);
 
-        // Initialisation de la pagination si formulaire non valide
+        // Initialisation des variables si formulaire non valide
         $pagination = $this->pager->paginate([], $page, 100);
+        $groupedTransactions = [];
 
         if ($filterForm->isSubmitted() && $filterForm->isValid()) {
             $filterQuery = $filterForm->getData();
@@ -98,6 +99,9 @@ class TransactionController extends AbstractController
                 $page,
                 100
             );
+
+            // Regrouper par mois
+            $groupedTransactions = $this->regroupTransactionsByMonth($pagination->getItems());
         }
 
         // Formulaire de création d'opération
@@ -108,6 +112,7 @@ class TransactionController extends AbstractController
 
         return $this->render('transaction/filter.html.twig', [
             'pagination' => $pagination,
+            'groupedTransactions' => $groupedTransactions,
             'filterForm' => $filterForm->createView(),
             'newTransactionForm' => $newTransactionForm->createView()
         ]);
@@ -188,5 +193,33 @@ class TransactionController extends AbstractController
             'year' => $date->format('Y'),
             'month' => $date->format('m')
         ]);
+    }
+
+    /**
+     * Retourner un array regroupant les opérations par mois et année
+     * @param array $transactions
+     * @return array
+     */
+    private function regroupTransactionsByMonth(array $transactions): array
+    {
+        $groupedTransactions = [];
+
+        foreach ($transactions as $transaction) {
+            /** @var Transaction $transaction */
+            $year = $transaction->getDate()->format('Y');
+            $month = $transaction->getDate()->format('m');
+
+            if (!isset($groupedTransactions[$year])) {
+                $groupedTransactions[$year] = [];
+            }
+
+            if (!isset($groupedTransactions[$year][$month])) {
+                $groupedTransactions[$year][$month] = [];
+            }
+
+            $groupedTransactions[$year][$month][] = $transaction;
+        }
+
+        return $groupedTransactions;
     }
 }

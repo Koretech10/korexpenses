@@ -22,33 +22,42 @@
 
 {% block body %}
     {% embed "pager.html.twig" %}{% endembed %}
-    {% for transaction in pagination %}
-        {# @var \App\Entity\Transaction transaction #}
-        {% if transaction.type == 0 %}
-            {% set card_class = 'bg-danger' %}
-            {% set value = "- " ~ transaction.value ~ " €"%}
-        {% else %}
-            {% set card_class = 'bg-success' %}
-            {% set value = "+ " ~ transaction.value ~ " €" %}
-        {% endif %}
-        <div class="col-12 col-md-4 mx-auto mb-2">
-            <div class="card {{ card_class }} text-white">
-                <h5 class="card-header">{{ transaction.date | date('d/m/y') }}</h5>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="card-text col-6">
-                            <a
-                                href="{{ path('transaction_edit', {'id': transaction.id}) }}"
-                                class="text-white"
-                            >
-                                {{ transaction.description }}
-                            </a>
+    {% for year, yearTransactions in groupedTransactions %}
+        <h4>{{ year }}</h4>
+        <hr />
+        {% for month, monthTransactions in yearTransactions %}
+            {% set monthToDatetime = "1970-" ~ month ~ "-01" %}
+            <h5>{{ monthToDatetime | format_datetime(pattern='MMMM', locale='fr') | capitalize }}</h5>
+            <hr />
+            {% for transaction in monthTransactions %}
+                {# @var \App\Entity\Transaction transaction #}
+                {% if transaction.type == 0 %}
+                    {% set card_class = 'bg-danger' %}
+                    {% set value = "- " ~ transaction.value ~ " €"%}
+                {% else %}
+                    {% set card_class = 'bg-success' %}
+                    {% set value = "+ " ~ transaction.value ~ " €" %}
+                {% endif %}
+                <div class="col-12 col-md-4 mx-auto mb-2">
+                    <div class="card {{ card_class }} text-white">
+                        <h5 class="card-header">{{ transaction.date | date('d/m/y') }}</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="card-text col-6">
+                                    <a
+                                            href="{{ path('transaction_edit', {'id': transaction.id}) }}"
+                                            class="text-white"
+                                    >
+                                        {{ transaction.description }}
+                                    </a>
+                                </div>
+                                <div class="card-text col-6 text-right">{{ value }}</div>
+                            </div>
                         </div>
-                        <div class="card-text col-6 text-right">{{ value }}</div>
                     </div>
                 </div>
-            </div>
-        </div>
+            {% endfor %}
+        {% endfor %}
     {% endfor %}
     {% embed "pager.html.twig" %}{% endembed %}
 
