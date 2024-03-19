@@ -51,10 +51,7 @@ class TransactionController extends AbstractController
 
         // Formulaire de filtrage
         $filterForm = $this->createForm(TransactionFilterType::class, null, [
-            'target_url' => $this->generateUrl('transaction_list', [
-                'year' => 2024,
-                'month' => '01'
-            ])
+            'target_url' => $this->generateUrl('transaction_filter')
         ]);
 
         // Pagination des opérations demandées
@@ -72,6 +69,17 @@ class TransactionController extends AbstractController
             'nextMonth' => $nextMonth,
             'filterForm' => $filterForm->createView()
         ]);
+    }
+
+    /**
+     * Filtrer les opérations selon la requête dans le GET
+     * @param Request $request
+     * @param int $page
+     * @return Response|RedirectResponse
+     */
+    #[Route('/transaction/filter/{page}', name: 'transaction_filter', requirements: ["page" => "\d+"])]
+    public function filter(Request $request, int $page = 1): Response|RedirectResponse
+    {
     }
 
     /**
