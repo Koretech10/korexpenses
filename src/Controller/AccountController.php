@@ -71,6 +71,10 @@ class AccountController extends AbstractController
 
             $this->em->persist($account);
             $this->em->flush();
+        } elseif (!$newAccountForm->isValid()) {
+            foreach ($newAccountForm->getErrors(true) as $error) {
+                $this->addFlash('danger', $error->getMessage());
+            }
         }
 
         return $this->redirectToRoute('account_list');
