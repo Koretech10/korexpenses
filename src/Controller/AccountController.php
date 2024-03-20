@@ -24,10 +24,11 @@ class AccountController extends AbstractController
 
     /**
      * Lister les comptes bancaires
+     * @param int $page
      * @return Response
      */
-    #[Route('/account/list', name: 'account_list')]
-    public function list(): Response
+    #[Route('/account/list/{page}', name: 'account_list', requirements: ["page" => "\d+"])]
+    public function list(int $page = 1): Response
     {
         // Formulaire de création de compte bancaire
         $account = new Account();
@@ -35,8 +36,16 @@ class AccountController extends AbstractController
             'target_url' => $this->generateUrl('account_create')
         ]);
 
+        // Pagination des comptes bancaires
+        $pagination = $this->pager->paginate(
+            $this->accountRepository->getAccounts(),
+            $page,
+            100
+        );
+
         return $this->render('account/list.html.twig', [
-            'newAccountForm' => $newAccountForm->createView()
+            'newAccountForm' => $newAccountForm->createView(),
+            'pagination' => $pagination
         ]);
     }
 
