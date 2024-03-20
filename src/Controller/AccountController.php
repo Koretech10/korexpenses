@@ -76,9 +76,28 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('account_list');
     }
 
+    /** Éditer le compte bancaire $account
+     * @param Account $account
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
     #[Route('/account/edit/{id}', name: 'account_edit', requirements: ["id" => "\d+"])]
-    public function edit(Account $account)
+    public function edit(Account $account, Request $request): RedirectResponse|Response
     {
+        $accountForm = $this->createForm(AccountType::class, $account);
+        $accountForm->handleRequest($request);
+
+        if ($accountForm->isSubmitted() && $accountForm->isValid()) {
+            $account = $accountForm->getData();
+
+            $this->em->flush();
+
+            return $this->redirectToRoute('account_list');
+        }
+
+        return $this->render('account/edit.html.twig', [
+            'accountForm' => $accountForm->createView()
+        ]);
     }
 
     #[Route('/account/delete/{id}', name: 'account_delete', requirements: ["id" => "\d+"])]

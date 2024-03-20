@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comptes bancaires / Édition{% endblock %}
+
+{% block actions %}
+    <a
+        class="btn btn-light"
+        href="{{ path('account_list') }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Retour vers Comptes bancaires"
+    >
+        <i class="bi bi-arrow-left"></i>
+    </a>
+{% endblock %}
+
+{% block body %}
+    {% form_theme accountForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+    {{ form(accountForm) }}
+{% endblock %}
