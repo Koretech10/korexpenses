@@ -32,7 +32,7 @@ class Transaction
     private ?int $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Account $account = null;
 
     public function getId(): ?int
