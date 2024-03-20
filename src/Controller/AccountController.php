@@ -100,12 +100,22 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/edit.html.twig', [
-            'accountForm' => $accountForm->createView()
+            'accountForm' => $accountForm->createView(),
+            'account' => $account
         ]);
     }
 
+    /**
+     * Supprimer le compte bancaire $account
+     * @param Account $account
+     * @return RedirectResponse
+     */
     #[Route('/account/delete/{id}', name: 'account_delete', requirements: ["id" => "\d+"])]
-    public function delete(Account $account)
+    public function delete(Account $account): RedirectResponse
     {
+        $this->em->remove($account);
+        $this->em->flush();
+
+        return $this->redirectToRoute('account_list');
     }
 }
