@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version0p1p0 extends AbstractMigration
+final class Version010 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,15 +21,25 @@ final class Version0p1p0 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('
+            CREATE TABLE account (
+                id INT AUTO_INCREMENT NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                balance DOUBLE PRECISION NOT NULL,
+                PRIMARY KEY(id)
+            ) 
+            DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        ');
+        $this->addSql('
             CREATE TABLE transaction (
                 id INT AUTO_INCREMENT NOT NULL,
+                account_id INT NOT NULL,
                 date DATE NOT NULL,
                 description VARCHAR(255) NOT NULL,
                 value DOUBLE PRECISION NOT NULL,
                 type SMALLINT NOT NULL,
+                INDEX IDX_723705D19B6B5FBA (account_id),
                 PRIMARY KEY(id)
-            ) 
-            DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');
         $this->addSql('
             CREATE TABLE messenger_messages (
@@ -44,13 +54,23 @@ final class Version0p1p0 extends AbstractMigration
                 INDEX IDX_75EA56E0E3BD61CE (available_at),
                 INDEX IDX_75EA56E016BA31DB (delivered_at),
                 PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            ) 
+            DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        ');
+        $this->addSql('
+            ALTER TABLE transaction
+            ADD CONSTRAINT FK_723705D19B6B5FBA FOREIGN KEY (account_id) REFERENCES account (id)
         ');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('
+            ALTER TABLE transaction 
+            DROP FOREIGN KEY FK_723705D19B6B5FBA
+        ');
+        $this->addSql('DROP TABLE account');
         $this->addSql('DROP TABLE transaction');
         $this->addSql('DROP TABLE messenger_messages');
     }
