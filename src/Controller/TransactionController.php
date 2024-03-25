@@ -49,7 +49,9 @@ class TransactionController extends AbstractController
         // Formulaire de création d'opération
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
-            'target_url' => $this->generateUrl('transaction_create')
+            'target_url' => $this->generateUrl('transaction_create', [
+                'account' => $account->getId()
+            ])
         ]);
 
         // Formulaire de filtrage
@@ -124,16 +126,20 @@ class TransactionController extends AbstractController
 
     /**
      * Créer une nouvelle opération
+     * @param Account $account
      * @param Request $request
      * @return RedirectResponse
      */
-    #[Route('transaction/create', name: 'transaction_create')]
-    public function create(Request $request): RedirectResponse
+    #[Route('transaction/create/{account}', name: 'transaction_create', requirements: ["account" => "\d+"])]
+    public function create(Account $account, Request $request): RedirectResponse
     {
         // Récupération du formulaire de création
         $transaction = new Transaction();
+        $transaction->setAccount($account);
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
-            'target_url' => $this->generateUrl('transaction_create')
+            'target_url' => $this->generateUrl('transaction_create', [
+                'account' => $account->getId()
+            ])
         ]);
         $newTransactionForm->handleRequest($request);
 
@@ -145,6 +151,7 @@ class TransactionController extends AbstractController
         }
 
         return $this->redirectToRoute('transaction_list', [
+            'account' => $account->getId(),
             'year' => $transaction->getDate()->format('Y'),
             'month' => $transaction->getDate()->format('m')
         ]);
