@@ -56,7 +56,9 @@ class TransactionController extends AbstractController
 
         // Formulaire de filtrage
         $filterForm = $this->createForm(TransactionFilterType::class, null, [
-            'target_url' => $this->generateUrl('transaction_filter')
+            'target_url' => $this->generateUrl('transaction_filter', [
+                'account' => $account->getId()
+            ])
         ]);
 
         // Pagination des opérations demandées
@@ -79,16 +81,22 @@ class TransactionController extends AbstractController
 
     /**
      * Filtrer les opérations selon la requête dans le GET
+     * @param Account $account
      * @param Request $request
      * @param int $page
      * @return Response|RedirectResponse
      */
-    #[Route('/transaction/filter/{page}', name: 'transaction_filter', requirements: ["page" => "\d+"])]
-    public function filter(Request $request, int $page = 1): Response|RedirectResponse
+    #[Route('/transaction/filter/{account}/{page}', name: 'transaction_filter', requirements: [
+        "account" => "\d+",
+        "page" => "\d+"
+    ])]
+    public function filter(Account $account, Request $request, int $page = 1): Response|RedirectResponse
     {
         // Formulaire de filtrage
         $filterForm = $this->createForm(TransactionFilterType::class, null, [
-            'target_url' => $this->generateUrl('transaction_filter')
+            'target_url' => $this->generateUrl('transaction_filter', [
+                'account' => $account->getId()
+            ])
         ]);
         $filterForm->handleRequest($request);
 
@@ -101,7 +109,7 @@ class TransactionController extends AbstractController
 
             // Pagination des opérations demandées
             $pagination = $this->pager->paginate(
-                $this->transactionRepository->filterTransactions($filterQuery),
+                $this->transactionRepository->filterTransactionsForAccount($account, $filterQuery),
                 $page,
                 100
             );
@@ -113,14 +121,17 @@ class TransactionController extends AbstractController
         // Formulaire de création d'opération
         $transaction = new Transaction();
         $newTransactionForm = $this->createForm(TransactionType::class, $transaction, [
-            'target_url' => $this->generateUrl('transaction_create')
+            'target_url' => $this->generateUrl('transaction_create', [
+                'account' => $account->getId()
+            ])
         ]);
 
         return $this->render('transaction/filter.html.twig', [
             'pagination' => $pagination,
             'groupedTransactions' => $groupedTransactions,
             'filterForm' => $filterForm->createView(),
-            'newTransactionForm' => $newTransactionForm->createView()
+            'newTransactionForm' => $newTransactionForm->createView(),
+            'account' => $account
         ]);
     }
 

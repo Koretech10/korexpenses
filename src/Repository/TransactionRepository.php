@@ -76,15 +76,20 @@ class TransactionRepository extends ServiceEntityRepository
 
     /**
      * Retourne les opérations filtrées selon la requête $filterQuery
+     * @param Account $account
      * @param array $filterQuery
      * @return QueryBuilder
      */
-    public function filterTransactions(array $filterQuery): QueryBuilder
+    public function filterTransactionsForAccount(Account $account, array $filterQuery): QueryBuilder
     {
         $query = $this
             ->createQueryBuilder('t')
             ->where('t.description LIKE :description')
-            ->setParameter('description', '%' . $filterQuery['description'] . '%')
+            ->andWhere('t.account = :account')
+            ->setParameters(new ArrayCollection([
+                new Parameter('description', '%' . $filterQuery['description'] . '%'),
+                new Parameter('account', $account)
+            ]))
         ;
 
         // Si l'intervalle de début de date d'opération est renseigné

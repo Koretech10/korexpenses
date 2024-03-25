@@ -128,6 +128,7 @@
         {% endblock %}
         {% block filterModalCancelPath %}
             {{ path('transaction_list', {
+                'account': account.id,
                 'year': 'now' | date('Y'),
                 'month': 'now' | date('m')
             }) }}
@@ -181,6 +182,7 @@
         function redirectToListMonth() {
             // Générer l'URL qui sera modifiée
             let url = "{{ path('transaction_list', {
+                'account': account.id,
                 'year': 1970,
                 'month': '01'
             }) }}";
@@ -200,6 +202,6 @@
 
             // Ne pas soumettre le formulaire
             return false;
-        }}
+        }
     </script>
 {% endblock %}
