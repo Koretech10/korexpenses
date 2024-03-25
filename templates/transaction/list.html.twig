@@ -35,8 +35,8 @@
         <div class="col-6 d-flex justify-content-end">
             <a href="{{ path('transaction_list', {
                 'account': account.id,
-                'year': previousMonth | date('Y'),
-                'month': previousMonth | date('m')
+                'year': nextMonth | date('Y'),
+                'month': nextMonth | date('m')
             }) }}">
                 {{ nextMonth | format_datetime(pattern='MMMM yyyy', locale='fr') | capitalize }}
                 <i class="bi bi-arrow-right"></i>
