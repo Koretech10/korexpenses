@@ -19,11 +19,8 @@
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{{ path('transaction_list', {
-                    'year': 'now' | date('Y'),
-                    'month': 'now' | date('m')
-                }) }}">
-                    <i class="bi bi-arrow-left-right"></i> Opérations
+                <a class="nav-link" href="{{ path('account_list') }}">
+                    <i class="bi bi-bank"></i> Comptes
                 </a>
             </li>
         </ul>
