@@ -71,6 +71,7 @@ class AccountController extends AbstractController
 
             $this->em->persist($account);
             $this->em->flush();
+            $this->addFlash('success', "Le compte bancaire a été créé avec succès.");
         } elseif (!$newAccountForm->isValid()) {
             foreach ($newAccountForm->getErrors(true) as $error) {
                 $this->addFlash('danger', $error->getMessage());
@@ -95,6 +96,7 @@ class AccountController extends AbstractController
             $account = $accountForm->getData();
 
             $this->em->flush();
+            $this->addFlash('success', "Compte bancaire modifié avec succès.");
 
             return $this->redirectToRoute('account_list');
         }
@@ -115,6 +117,7 @@ class AccountController extends AbstractController
     {
         $this->em->remove($account);
         $this->em->flush();
+        $this->addFlash('success', "Compte bancaire supprimé avec succès.");
 
         return $this->redirectToRoute('account_list');
     }
