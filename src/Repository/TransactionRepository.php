@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -46,6 +49,27 @@ class TransactionRepository extends ServiceEntityRepository
             ->createQueryBuilder('t')
             ->where("t.date LIKE :month")
             ->setParameter('month', "$year-$month-%")
+            ->orderBy('t.date')
+        ;
+    }
+
+    /**
+     * Retourne toutes les opérations du compte bancaire $account pour le mois $month $year triées par date
+     * @param Account $account
+     * @param int $year
+     * @param string $month
+     * @return QueryBuilder
+     */
+    public function getAllTransactionsForAccountAndMonth(Account $account, int $year, string $month): QueryBuilder
+    {
+        return $this
+            ->createQueryBuilder('t')
+            ->where('t.account = :account')
+            ->andWhere('t.date LIKE :month')
+            ->setParameters(new ArrayCollection([
+                new Parameter('account', $account),
+                new Parameter('month', "$year-$month-%")
+            ]))
             ->orderBy('t.date')
         ;
     }

@@ -24,6 +24,7 @@
     <div class="row">
         <div class="col-6 d-flex justify-content-start">
             <a href="{{ path('transaction_list', {
+                'account': account.id,
                 'year': previousMonth | date('Y'),
                 'month': previousMonth | date('m')
             }) }}">
@@ -33,8 +34,9 @@
         </div>
         <div class="col-6 d-flex justify-content-end">
             <a href="{{ path('transaction_list', {
-                'year': nextMonth | date('Y'),
-                'month': nextMonth | date('m')
+                'account': account.id,
+                'year': previousMonth | date('Y'),
+                'month': previousMonth | date('m')
             }) }}">
                 {{ nextMonth | format_datetime(pattern='MMMM yyyy', locale='fr') | capitalize }}
                 <i class="bi bi-arrow-right"></i>
@@ -149,8 +151,9 @@
         {% endblock %}
         {% block filterModalCancelPath %}
             {{ path('transaction_list', {
-                'year': 'now' | date('Y'),
-                'month': 'now' | date('m')
+                'account': account.id,
+                'year': previousMonth | date('Y'),
+                'month': previousMonth | date('m')
             }) }}
         {% endblock %}
     {% endembed %}
@@ -202,6 +205,7 @@
         function redirectToListMonth() {
             // Générer l'URL qui sera modifiée
             let url = "{{ path('transaction_list', {
+                'account': account.id,
                 'year': 1970,
                 'month': '01'
             }) }}";

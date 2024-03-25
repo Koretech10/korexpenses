@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
 use App\Entity\Transaction;
 use App\Form\Filter\TransactionFilterType;
 use App\Form\TransactionType;
@@ -26,17 +27,19 @@ class TransactionController extends AbstractController
 
     /**
      * Lister les opérations
+     * @param Account $account
      * @param int $year
      * @param string $month
      * @param int $page
      * @return Response
      */
-    #[Route('/transaction/list/{year}/{month}/{page}', name: 'transaction_list', requirements: [
+    #[Route('/transaction/list/{account}/{year}/{month}/{page}', name: 'transaction_list', requirements: [
+        "account" => "\d+",
         "year" => "\d{4}",
         "month" => "[01]\d",
         "page" => "\d+",
     ])]
-    public function list(int $year, string $month, int $page = 1): Response
+    public function list(Account $account, int $year, string $month, int $page = 1): Response
     {
         // Définition du mois précédent et du mois suivant
         $currentMonth = new DateTimeImmutable("$year-$month-01");
@@ -56,7 +59,7 @@ class TransactionController extends AbstractController
 
         // Pagination des opérations demandées
         $pagination = $this->pager->paginate(
-            $this->transactionRepository->getAllTransactionsForMonth($year, $month),
+            $this->transactionRepository->getAllTransactionsForAccountAndMonth($account, $year, $month),
             $page,
             100
         );
@@ -67,6 +70,7 @@ class TransactionController extends AbstractController
             'currentMonth' => $currentMonth,
             'previousMonth' => $previousMonth,
             'nextMonth' => $nextMonth,
+            'account' => $account,
             'filterForm' => $filterForm->createView()
         ]);
     }
