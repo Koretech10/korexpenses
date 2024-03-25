@@ -18,6 +18,7 @@
                 <tr>
                     <th>Nom</th>
                     <th>Solde</th>
+                    <th>&nbsp; {# Lien vers opérations #}</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +31,15 @@
                         </a>
                     </td>
                     <td>{{ account.balance }} €</td>
+                    <td>
+                        <a href="{{ path('transaction_list', {
+                            'account': account.id,
+                            'year': 'now' | date('Y'),
+                            'month': 'now' | date('m')
+                        }) }}">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
