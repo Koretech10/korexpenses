@@ -159,6 +159,7 @@ class TransactionController extends AbstractController
 
             $this->em->persist($transaction);
             $this->em->flush();
+            $this->addFlash('success', "L'opération a été créée avec succès.");
         }
 
         return $this->redirectToRoute('transaction_list', [
@@ -185,6 +186,7 @@ class TransactionController extends AbstractController
             $transaction = $transactionForm->getData();
 
             $this->em->flush();
+            $this->addFlash('success', "Opération modifiée avec succès.");
 
             return $this->redirectToRoute('transaction_list', [
                 'account' => $transaction->getAccount()->getId(),
@@ -212,6 +214,7 @@ class TransactionController extends AbstractController
 
         $this->em->remove($transaction);
         $this->em->flush();
+        $this->addFlash('success', "Opération supprimée avec succès.");
 
         return $this->redirectToRoute('transaction_list', [
             'account' => $account->getId(),
