@@ -6,6 +6,7 @@
     <a
         class="btn btn-light"
         href="{{ path('transaction_list', {
+            'account': transaction.account.id,
             'year': transaction.date | date('Y'),
             'month': transaction.date | date('m')
         }) }}"

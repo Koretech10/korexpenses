@@ -187,6 +187,7 @@ class TransactionController extends AbstractController
             $this->em->flush();
 
             return $this->redirectToRoute('transaction_list', [
+                'account' => $transaction->getAccount()->getId(),
                 'year' => $transaction->getDate()->format('Y'),
                 'month' => $transaction->getDate()->format('m')
             ]);
@@ -207,11 +208,13 @@ class TransactionController extends AbstractController
     public function delete(Transaction $transaction): RedirectResponse
     {
         $date = $transaction->getDate();
+        $account = $transaction->getAccount();
 
         $this->em->remove($transaction);
         $this->em->flush();
 
         return $this->redirectToRoute('transaction_list', [
+            'account' => $account->getId(),
             'year' => $date->format('Y'),
             'month' => $date->format('m')
         ]);
