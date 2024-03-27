@@ -7,6 +7,7 @@ use App\Entity\Transaction;
 use App\Form\Filter\TransactionFilterType;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
+use App\Service\BalanceUpdaterService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -21,7 +22,8 @@ class TransactionController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly TransactionRepository $transactionRepository,
-        private readonly PaginatorInterface $pager
+        private readonly PaginatorInterface $pager,
+        private readonly BalanceUpdaterService $balanceUpdater
     ) {
     }
 
@@ -177,6 +179,7 @@ class TransactionController extends AbstractController
 
             $this->em->persist($transaction);
             $this->em->flush();
+            $this->balanceUpdater->addTransaction($transaction);
             $this->addFlash('success', "L'opération a été créée avec succès.");
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Transaction;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -12,5 +13,22 @@ class BalanceUpdaterService
     public function __construct(
         private readonly EntityManagerInterface $em
     ) {
+    }
+
+    /**
+     * Mets à jour le solde suite à la création de $transaction
+     * @param Transaction $transaction
+     * @return void
+     */
+    public function addTransaction(Transaction $transaction): void
+    {
+        $account = $transaction->getAccount();
+
+        $transaction->getType() === 0 ?
+            $account->setBalance($account->getBalance() - $transaction->getValue()) :
+            $account->setBalance($account->getBalance() + $transaction->getValue())
+        ;
+
+        $this->em->flush();
     }
 }
