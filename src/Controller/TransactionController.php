@@ -205,6 +205,7 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('account_list');
         }
 
+        $oldTransaction = clone $transaction;
         $transactionForm = $this->createForm(TransactionType::class, $transaction);
         $transactionForm->handleRequest($request);
 
@@ -213,6 +214,7 @@ class TransactionController extends AbstractController
             $transaction = $transactionForm->getData();
 
             $this->em->flush();
+            $this->balanceUpdater->updateTransaction($oldTransaction, $transaction);
             $this->addFlash('success', "Opération modifiée avec succès.");
 
             return $this->redirectToRoute('transaction_list', [

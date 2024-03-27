@@ -33,6 +33,34 @@ class BalanceUpdaterService
     }
 
     /**
+     * Mets à jour le solde suite à la modification de $transaction
+     * @param Transaction $oldTransaction
+     * @param Transaction $newTransaction
+     * @return void
+     */
+    public function updateTransaction(Transaction $oldTransaction, Transaction $newTransaction): void
+    {
+        $account = $oldTransaction->getAccount();
+
+        // Récupération de l'ancienne valeur
+        $oldTransaction->getType() === 0 ?
+            $oldValue = -$oldTransaction->getValue() :
+            $oldValue = $oldTransaction->getValue()
+        ;
+
+        // Récupération de la nouvelle valeur
+        $newTransaction->getType() === 0 ?
+            $newValue = -$newTransaction->getValue() :
+            $newValue = $newTransaction->getValue()
+        ;
+
+        // Mise à jour du solde avec le delta
+        $account->setBalance($account->getBalance() + ($newValue - $oldValue));
+
+        $this->em->flush();
+    }
+
+    /**
      * Mets à jour le solde suite à la suppression de $transaction
      * @param Transaction $transaction
      * @return void
