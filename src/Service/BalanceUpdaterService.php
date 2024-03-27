@@ -31,4 +31,21 @@ class BalanceUpdaterService
 
         $this->em->flush();
     }
+
+    /**
+     * Mets à jour le solde suite à la suppression de $transaction
+     * @param Transaction $transaction
+     * @return void
+     */
+    public function removeTransaction(Transaction $transaction): void
+    {
+        $account = $transaction->getAccount();
+
+        $transaction->getType() === 0 ?
+            $account->setBalance($account->getBalance() + $transaction->getValue()) :
+            $account->setBalance($account->getBalance() - $transaction->getValue())
+        ;
+
+        $this->em->flush();
+    }
 }

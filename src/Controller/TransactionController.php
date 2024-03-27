@@ -242,17 +242,17 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('account_list');
         }
 
-        $date = $transaction->getDate();
-        $account = $transaction->getAccount();
+        $oldTransaction = $transaction;
 
         $this->em->remove($transaction);
         $this->em->flush();
+        $this->balanceUpdater->removeTransaction($oldTransaction);
         $this->addFlash('success', "Opération supprimée avec succès.");
 
         return $this->redirectToRoute('transaction_list', [
-            'account' => $account->getId(),
-            'year' => $date->format('Y'),
-            'month' => $date->format('m')
+            'account' => $oldTransaction->getAccount()->getId(),
+            'year' => $oldTransaction->getDate()->format('Y'),
+            'month' => $oldTransaction->getDate()->format('m')
         ]);
     }
 
