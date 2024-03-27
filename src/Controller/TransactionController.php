@@ -27,9 +27,9 @@ class TransactionController extends AbstractController
 
     /**
      * Lister les opérations
-     * @param Account $account
      * @param int $year
      * @param string $month
+     * @param Account|null $account
      * @param int $page
      * @return Response
      */
@@ -39,8 +39,14 @@ class TransactionController extends AbstractController
         "month" => "[01]\d",
         "page" => "\d+",
     ])]
-    public function list(Account $account, int $year, string $month, int $page = 1): Response
+    public function list(int $year, string $month, Account $account = null, int $page = 1): Response
     {
+        // Vérification de l'existence du compte bancaire demandé
+        if (!$account) {
+            $this->addFlash('danger', "Ce compte n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         // Définition du mois précédent et du mois suivant
         $currentMonth = new DateTimeImmutable("$year-$month-01");
         $nextMonth = $currentMonth->modify('+ 1 month');
@@ -81,8 +87,8 @@ class TransactionController extends AbstractController
 
     /**
      * Filtrer les opérations selon la requête dans le GET
-     * @param Account $account
      * @param Request $request
+     * @param Account|null $account
      * @param int $page
      * @return Response|RedirectResponse
      */
@@ -90,8 +96,14 @@ class TransactionController extends AbstractController
         "account" => "\d+",
         "page" => "\d+"
     ])]
-    public function filter(Account $account, Request $request, int $page = 1): Response|RedirectResponse
+    public function filter(Request $request, Account $account = null, int $page = 1): Response|RedirectResponse
     {
+        // Vérification de l'existence du compte bancaire demandé
+        if (!$account) {
+            $this->addFlash('danger', "Ce compte n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         // Formulaire de filtrage
         $filterForm = $this->createForm(TransactionFilterType::class, null, [
             'target_url' => $this->generateUrl('transaction_filter', [
@@ -137,13 +149,19 @@ class TransactionController extends AbstractController
 
     /**
      * Créer une nouvelle opération
-     * @param Account $account
      * @param Request $request
+     * @param Account|null $account
      * @return RedirectResponse
      */
     #[Route('transaction/create/{account}', name: 'transaction_create', requirements: ["account" => "\d+"])]
-    public function create(Account $account, Request $request): RedirectResponse
+    public function create(Request $request, Account $account = null): RedirectResponse
     {
+        // Vérification de l'existence du compte bancaire demandé
+        if (!$account) {
+            $this->addFlash('danger', "Ce compte n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         // Récupération du formulaire de création
         $transaction = new Transaction();
         $transaction->setAccount($account);
