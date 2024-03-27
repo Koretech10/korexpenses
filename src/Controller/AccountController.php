@@ -82,13 +82,19 @@ class AccountController extends AbstractController
     }
 
     /** Éditer le compte bancaire $account
-     * @param Account $account
      * @param Request $request
+     * @param Account|null $account
      * @return RedirectResponse|Response
      */
     #[Route('/account/edit/{id}', name: 'account_edit', requirements: ["id" => "\d+"])]
-    public function edit(Account $account, Request $request): RedirectResponse|Response
+    public function edit(Request $request, Account $account = null): RedirectResponse|Response
     {
+        // Vérification de l'existence du compte bancaire demandé
+        if (!$account) {
+            $this->addFlash('danger', "Ce compte n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         $accountForm = $this->createForm(AccountType::class, $account);
         $accountForm->handleRequest($request);
 
@@ -109,12 +115,18 @@ class AccountController extends AbstractController
 
     /**
      * Supprimer le compte bancaire $account
-     * @param Account $account
+     * @param Account|null $account
      * @return RedirectResponse
      */
     #[Route('/account/delete/{id}', name: 'account_delete', requirements: ["id" => "\d+"])]
-    public function delete(Account $account): RedirectResponse
+    public function delete(Account $account = null): RedirectResponse
     {
+        // Vérification de l'existence du compte bancaire demandé
+        if (!$account) {
+            $this->addFlash('danger', "Ce compte n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         $this->em->remove($account);
         $this->em->flush();
         $this->addFlash('success', "Compte bancaire supprimé avec succès.");
