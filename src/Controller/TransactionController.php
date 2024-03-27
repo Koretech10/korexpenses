@@ -189,13 +189,19 @@ class TransactionController extends AbstractController
 
     /**
      * Éditer l'opération $transaction
-     * @param Transaction $transaction
      * @param Request $request
+     * @param Transaction|null $transaction
      * @return RedirectResponse|Response
      */
     #[Route('/transaction/edit/{id}', name: 'transaction_edit', requirements: ["id" => "\d+"])]
-    public function edit(Transaction $transaction, Request $request): RedirectResponse|Response
+    public function edit(Request $request, Transaction $transaction = null): RedirectResponse|Response
     {
+        // Vérification de l'existence de la transaction demandée
+        if (!$transaction) {
+            $this->addFlash('danger', "Cette transaction n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         $transactionForm = $this->createForm(TransactionType::class, $transaction);
         $transactionForm->handleRequest($request);
 
@@ -221,12 +227,18 @@ class TransactionController extends AbstractController
 
     /**
      * Supprimer l'opération $transaction
-     * @param Transaction $transaction
+     * @param Transaction|null $transaction
      * @return RedirectResponse
      */
     #[Route('/transaction/delete/{id}', name: 'transaction_delete', requirements: ["id" => "\d+"])]
-    public function delete(Transaction $transaction): RedirectResponse
+    public function delete(Transaction $transaction = null): RedirectResponse
     {
+        // Vérification de l'existence de la transaction demandée
+        if (!$transaction) {
+            $this->addFlash('danger', "Cette transaction n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
         $date = $transaction->getDate();
         $account = $transaction->getAccount();
 
