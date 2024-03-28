@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Transaction;
+use App\Repository\AccountRepository;
+use App\Repository\TransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -11,7 +13,9 @@ use Doctrine\ORM\EntityManagerInterface;
 class BalanceUpdaterService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em
+        private readonly EntityManagerInterface $em,
+        private readonly TransactionRepository $transactionRepository,
+        private readonly AccountRepository $accountRepository
     ) {
     }
 
@@ -75,5 +79,57 @@ class BalanceUpdaterService
         ;
 
         $this->em->flush();
+    }
+
+    /**
+     * Mets à jour la solde à partir de toutes les transactions de $account jusqu'à aujourd'hui
+     * @return void
+     */
+    public function updateAccountsBalance(): void
+    {
+        $now = new \DateTimeImmutable();
+
+        foreach ($this->accountRepository->findAll() as $account) {
+            $balance = 0;
+            $transactions = $this
+                ->transactionRepository
+                ->filterTransactionsForAccount($account, [
+                    'description' => '',
+                    'dateFrom' => null,
+                    'dateTo' => $now,
+                    'type' => [],
+                    'valueFrom' => null,
+                    'valueTo' => null
+                ])
+                ->getQuery()
+                ->getResult()
+            ;
+
+            // Calcul du solde à partir des transactions
+            foreach ($transactions as $transaction) {
+                $value = $this->getValueFromTransaction($transaction);
+                $balance += $value;
+            }
+
+            // Mise à jour du solde
+            $account->setBalance($balance);
+        }
+
+        $this->em->flush();
+    }
+
+    /**
+     * Retourne la valeur d'une transaction selon son type
+     * @param Transaction $transaction
+     * @return float
+     */
+    private function getValueFromTransaction(Transaction $transaction): float
+    {
+        $transaction->getType() === 0 ?
+            $value = -$transaction->getValue() :
+            $value = $transaction->getValue()
+        ;
+
+        return $value;
     }
 }
