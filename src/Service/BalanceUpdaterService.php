@@ -47,16 +47,10 @@ class BalanceUpdaterService
         $account = $oldTransaction->getAccount();
 
         // Récupération de l'ancienne valeur
-        $oldTransaction->getType() === 0 ?
-            $oldValue = -$oldTransaction->getValue() :
-            $oldValue = $oldTransaction->getValue()
-        ;
+        $oldValue = $this->getValueFromTransaction($oldTransaction);
 
         // Récupération de la nouvelle valeur
-        $newTransaction->getType() === 0 ?
-            $newValue = -$newTransaction->getValue() :
-            $newValue = $newTransaction->getValue()
-        ;
+        $newValue = $this->getValueFromTransaction($newTransaction);
 
         // Mise à jour du solde avec le delta
         $account->setBalance($account->getBalance() + ($newValue - $oldValue));
