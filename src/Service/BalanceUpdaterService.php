@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Transaction;
 use App\Repository\AccountRepository;
 use App\Repository\TransactionRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -12,11 +13,14 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class BalanceUpdaterService
 {
+    private DateTimeImmutable $now;
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly TransactionRepository $transactionRepository,
         private readonly AccountRepository $accountRepository
     ) {
+        $this->now = new DateTimeImmutable();
     }
 
     /**
@@ -83,8 +87,6 @@ class BalanceUpdaterService
      */
     public function updateAccountsBalance(): void
     {
-        $now = new \DateTimeImmutable();
-
         foreach ($this->accountRepository->findAll() as $account) {
             $balance = 0;
             $transactions = $this
@@ -92,7 +94,7 @@ class BalanceUpdaterService
                 ->filterTransactionsForAccount($account, [
                     'description' => '',
                     'dateFrom' => null,
-                    'dateTo' => $now,
+                    'dateTo' => $this->now,
                     'type' => [],
                     'valueFrom' => null,
                     'valueTo' => null
