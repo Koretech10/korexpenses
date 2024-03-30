@@ -28,10 +28,11 @@ class BalanceUpdaterService
     {
         $account = $transaction->getAccount();
 
-        $transaction->getType() === 0 ?
-            $account->setBalance($account->getBalance() - $transaction->getValue()) :
-            $account->setBalance($account->getBalance() + $transaction->getValue())
-        ;
+        // Récupération de la valeur de la transaction
+        $value = $this->getValueFromTransaction($transaction);
+
+        // Mise à jour du solde
+        $account->setBalance($account->getBalance() + $value);
 
         $this->em->flush();
     }
@@ -67,10 +68,11 @@ class BalanceUpdaterService
     {
         $account = $transaction->getAccount();
 
-        $transaction->getType() === 0 ?
-            $account->setBalance($account->getBalance() + $transaction->getValue()) :
-            $account->setBalance($account->getBalance() - $transaction->getValue())
-        ;
+        // Récupération de la valeur de la transaction
+        $value = $this->getValueFromTransaction($transaction);
+
+        // Mise à jour du solde
+        $account->setBalance($account->getBalance() - $value);
 
         $this->em->flush();
     }
