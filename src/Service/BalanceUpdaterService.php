@@ -30,15 +30,18 @@ class BalanceUpdaterService
      */
     public function addTransaction(Transaction $transaction): void
     {
-        $account = $transaction->getAccount();
+        // Ne mettre à jour le solde que si la date de la transaction n'est pas dans le futur
+        if ($transaction->getDate() <= $this->now) {
+            $account = $transaction->getAccount();
 
-        // Récupération de la valeur de la transaction
-        $value = $this->getValueFromTransaction($transaction);
+            // Récupération de la valeur de la transaction
+            $value = $this->getValueFromTransaction($transaction);
 
-        // Mise à jour du solde
-        $account->setBalance($account->getBalance() + $value);
+            // Mise à jour du solde
+            $account->setBalance($account->getBalance() + $value);
 
-        $this->em->flush();
+            $this->em->flush();
+        }
     }
 
     /**
@@ -50,12 +53,18 @@ class BalanceUpdaterService
     public function updateTransaction(Transaction $oldTransaction, Transaction $newTransaction): void
     {
         $account = $oldTransaction->getAccount();
+        $oldValue = 0;
+        $newValue = 0;
 
-        // Récupération de l'ancienne valeur
-        $oldValue = $this->getValueFromTransaction($oldTransaction);
+        // Récupération de l'ancienne valeur si la date de la transaction n'est pas dans le futur
+        if ($oldTransaction->getDate() <= $this->now) {
+            $oldValue = $this->getValueFromTransaction($oldTransaction);
+        }
 
-        // Récupération de la nouvelle valeur
-        $newValue = $this->getValueFromTransaction($newTransaction);
+        // Récupération de la nouvelle valeur si la date de la transaction n'est pas dans le futur
+        if ($newTransaction->getDate() <= $this->now) {
+            $newValue = $this->getValueFromTransaction($newTransaction);
+        }
 
         // Mise à jour du solde avec le delta
         $account->setBalance($account->getBalance() + ($newValue - $oldValue));
@@ -70,15 +79,18 @@ class BalanceUpdaterService
      */
     public function removeTransaction(Transaction $transaction): void
     {
-        $account = $transaction->getAccount();
+        // Ne mettre à jour le solde que si la date de la transaction n'est pas dans le futur
+        if ($transaction->getDate() <= $this->now) {
+            $account = $transaction->getAccount();
 
-        // Récupération de la valeur de la transaction
-        $value = $this->getValueFromTransaction($transaction);
+            // Récupération de la valeur de la transaction
+            $value = $this->getValueFromTransaction($transaction);
 
-        // Mise à jour du solde
-        $account->setBalance($account->getBalance() - $value);
+            // Mise à jour du solde
+            $account->setBalance($account->getBalance() - $value);
 
-        $this->em->flush();
+            $this->em->flush();
+        }
     }
 
     /**
