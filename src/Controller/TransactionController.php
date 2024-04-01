@@ -7,6 +7,7 @@ use App\Entity\Transaction;
 use App\Form\Filter\TransactionFilterType;
 use App\Form\TransactionType;
 use App\Repository\TransactionRepository;
+use App\Service\BalanceUpdaterService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -21,7 +22,8 @@ class TransactionController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly TransactionRepository $transactionRepository,
-        private readonly PaginatorInterface $pager
+        private readonly PaginatorInterface $pager,
+        private readonly BalanceUpdaterService $balanceUpdater
     ) {
     }
 
@@ -74,6 +76,22 @@ class TransactionController extends AbstractController
             100
         );
 
+        // Récupération du solde prévu en fin de mois
+        $futureTransactions = $this
+            ->transactionRepository
+            ->filterTransactionsForAccount($account, [
+                'description' => '',
+                'dateFrom' => new DateTimeImmutable(),
+                'dateTo' => $currentMonth->modify('last day of this month'),
+                'type' => [],
+                'valueFrom' => null,
+                'valueTo' => null
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
+        $forecastedBalance = $this->balanceUpdater->getBalanceForecast($account, $futureTransactions);
+
         return $this->render('transaction/list.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
             'pagination' => $pagination,
@@ -81,6 +99,7 @@ class TransactionController extends AbstractController
             'previousMonth' => $previousMonth,
             'nextMonth' => $nextMonth,
             'account' => $account,
+            'forecastedBalance' => $forecastedBalance,
             'filterForm' => $filterForm->createView()
         ]);
     }
@@ -177,6 +196,7 @@ class TransactionController extends AbstractController
 
             $this->em->persist($transaction);
             $this->em->flush();
+            $this->balanceUpdater->addTransaction($transaction);
             $this->addFlash('success', "L'opération a été créée avec succès.");
         }
 
@@ -202,6 +222,7 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('account_list');
         }
 
+        $oldTransaction = clone $transaction;
         $transactionForm = $this->createForm(TransactionType::class, $transaction);
         $transactionForm->handleRequest($request);
 
@@ -210,6 +231,7 @@ class TransactionController extends AbstractController
             $transaction = $transactionForm->getData();
 
             $this->em->flush();
+            $this->balanceUpdater->updateTransaction($oldTransaction, $transaction);
             $this->addFlash('success', "Opération modifiée avec succès.");
 
             return $this->redirectToRoute('transaction_list', [
@@ -239,17 +261,17 @@ class TransactionController extends AbstractController
             return $this->redirectToRoute('account_list');
         }
 
-        $date = $transaction->getDate();
-        $account = $transaction->getAccount();
+        $oldTransaction = $transaction;
 
         $this->em->remove($transaction);
         $this->em->flush();
+        $this->balanceUpdater->removeTransaction($oldTransaction);
         $this->addFlash('success', "Opération supprimée avec succès.");
 
         return $this->redirectToRoute('transaction_list', [
-            'account' => $account->getId(),
-            'year' => $date->format('Y'),
-            'month' => $date->format('m')
+            'account' => $oldTransaction->getAccount()->getId(),
+            'year' => $oldTransaction->getDate()->format('Y'),
+            'month' => $oldTransaction->getDate()->format('m')
         ]);
     }
 
