@@ -22,43 +22,64 @@
 
 {% block body %}
     {% embed "pager.html.twig" %}{% endembed %}
-    {% for year, yearTransactions in groupedTransactions %}
-        <h4>{{ year }}</h4>
-        <hr />
-        {% for month, monthTransactions in yearTransactions %}
-            {% set monthToDatetime = "1970-" ~ month ~ "-01" %}
-            <h5>{{ monthToDatetime | format_datetime(pattern='MMMM', locale='fr') | capitalize }}</h5>
-            <hr />
-            {% for transaction in monthTransactions %}
-                {# @var \App\Entity\Transaction transaction #}
-                {% if transaction.type == 0 %}
-                    {% set card_class = 'bg-danger' %}
-                    {% set value = "- " ~ transaction.value ~ " €"%}
-                {% else %}
-                    {% set card_class = 'bg-success' %}
-                    {% set value = "+ " ~ transaction.value ~ " €" %}
-                {% endif %}
-                <div class="col-12 col-md-4 mx-auto mb-2">
-                    <div class="card {{ card_class }} text-white">
-                        <h5 class="card-header">{{ transaction.date | date('d/m/y') }}</h5>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="card-text col-6">
-                                    <a
-                                            href="{{ path('transaction_edit', {'id': transaction.id}) }}"
-                                            class="text-white"
-                                    >
-                                        {{ transaction.description }}
-                                    </a>
+    <div class="row">
+        <div class="col-12 col-md-3 mb-2 table-responsive">
+            <table class="table">
+                <tr>
+                    <td>
+                        <h5>Total au {{ 'now' | date('d/m/Y') }}</h5>
+                    </td>
+                    {% if account.balance > 0 %}
+                        {% set balanceColorClass = 'text-success' %}
+                    {% else %}
+                        {% set balanceColorClass = 'text-danger' %}
+                    {% endif %}
+                    <td class="{{ balanceColorClass }} font-weight-bold">
+                        {{ account.balance }} €
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-12 col-md-9">
+            {% for year, yearTransactions in groupedTransactions %}
+                <h4>{{ year }}</h4>
+                <hr />
+                {% for month, monthTransactions in yearTransactions %}
+                    {% set monthToDatetime = "1970-" ~ month ~ "-01" %}
+                    <h5>{{ monthToDatetime | format_datetime(pattern='MMMM', locale='fr') | capitalize }}</h5>
+                    <hr />
+                    {% for transaction in monthTransactions %}
+                        {# @var \App\Entity\Transaction transaction #}
+                        {% if transaction.type == 0 %}
+                            {% set card_class = 'bg-danger' %}
+                            {% set value = "- " ~ transaction.value ~ " €"%}
+                        {% else %}
+                            {% set card_class = 'bg-success' %}
+                            {% set value = "+ " ~ transaction.value ~ " €" %}
+                        {% endif %}
+                        <div class="col-12 col-md-5 mx-auto mb-2">
+                            <div class="card {{ card_class }} text-white">
+                                <h5 class="card-header">{{ transaction.date | date('d/m/y') }}</h5>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="card-text col-6">
+                                            <a
+                                                href="{{ path('transaction_edit', {'id': transaction.id}) }}"
+                                                class="text-white"
+                                            >
+                                                {{ transaction.description }}
+                                            </a>
+                                        </div>
+                                        <div class="card-text col-6 text-right">{{ value }}</div>
+                                    </div>
                                 </div>
-                                <div class="card-text col-6 text-right">{{ value }}</div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    {% endfor %}
+                {% endfor %}
             {% endfor %}
-        {% endfor %}
-    {% endfor %}
+        </div>
+    </div>
     {% embed "pager.html.twig" %}{% endembed %}
 
     {# Modal de création d'opération #}
