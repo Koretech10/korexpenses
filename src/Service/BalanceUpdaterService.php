@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Account;
 use App\Entity\Transaction;
 use App\Repository\AccountRepository;
 use App\Repository\TransactionRepository;
@@ -126,6 +127,23 @@ class BalanceUpdaterService
         }
 
         $this->em->flush();
+    }
+
+    /**
+     * Retourne le solde prévu de $account en prenant en compte les $transactions fournies
+     * @param Account $account
+     * @param array<Transaction> $transactions
+     * @return float
+     */
+    public function getBalanceForecast(Account $account, array $transactions): float
+    {
+        $balance = $account->getBalance();
+
+        foreach ($transactions as $transaction) {
+            $balance += $this->getValueFromTransaction($transaction);
+        }
+
+        return $balance;
     }
 
     /**

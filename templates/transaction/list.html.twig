@@ -65,6 +65,19 @@
                         {{ account.balance }} €
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <h5>Total fin de mois</h5>
+                    </td>
+                    {% if forecastedBalance > 0 %}
+                        {% set forecastedBalanceColorClass = 'text-success' %}
+                    {% else %}
+                        {% set forecastedBalanceColorClass = 'text-danger' %}
+                    {% endif %}
+                    <td class="{{ forecastedBalanceColorClass }} font-weight-bold">
+                        {{ forecastedBalance }} €
+                    </td>
+                </tr>
             </table>
         </div>
         <hr />

@@ -76,6 +76,22 @@ class TransactionController extends AbstractController
             100
         );
 
+        // Récupération du solde prévu en fin de mois
+        $futureTransactions = $this
+            ->transactionRepository
+            ->filterTransactionsForAccount($account, [
+                'description' => '',
+                'dateFrom' => new DateTimeImmutable(),
+                'dateTo' => $currentMonth->modify('last day of this month'),
+                'type' => [],
+                'valueFrom' => null,
+                'valueTo' => null
+            ])
+            ->getQuery()
+            ->getResult()
+        ;
+        $forecastedBalance = $this->balanceUpdater->getBalanceForecast($account, $futureTransactions);
+
         return $this->render('transaction/list.html.twig', [
             'newTransactionForm' => $newTransactionForm->createView(),
             'pagination' => $pagination,
@@ -83,6 +99,7 @@ class TransactionController extends AbstractController
             'previousMonth' => $previousMonth,
             'nextMonth' => $nextMonth,
             'account' => $account,
+            'forecastedBalance' => $forecastedBalance,
             'filterForm' => $filterForm->createView()
         ]);
     }
