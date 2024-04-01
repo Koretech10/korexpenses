@@ -36,7 +36,7 @@
                         {% set balanceColorClass = 'text-danger' %}
                     {% endif %}
                     <td class="{{ balanceColorClass }}">
-                        {{ account.balance }} €
+                        {{ account.balance | format_number({fraction_digit: 2}) }} €
                     </td>
                     <td>
                         <a href="{{ path('transaction_list', {

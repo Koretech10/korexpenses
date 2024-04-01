@@ -36,7 +36,7 @@
                         {% set balanceColorClass = 'text-danger' %}
                     {% endif %}
                     <td class="{{ balanceColorClass }} font-weight-bold">
-                        {{ account.balance }} €
+                        {{ account.balance | format_number({fraction_digit: 2}) }} €
                     </td>
                 </tr>
             </table>
@@ -53,10 +53,10 @@
                         {# @var \App\Entity\Transaction transaction #}
                         {% if transaction.type == 0 %}
                             {% set card_class = 'bg-danger' %}
-                            {% set value = "- " ~ transaction.value ~ " €"%}
+                            {% set value = "- " ~ transaction.value | format_number({fraction_digit: 2}) ~ " €"%}
                         {% else %}
                             {% set card_class = 'bg-success' %}
-                            {% set value = "+ " ~ transaction.value ~ " €" %}
+                            {% set value = "+ " ~ transaction.value | format_number({fraction_digit: 2}) ~ " €" %}
                         {% endif %}
                         <div class="col-12 col-md-5 mx-auto mb-2">
                             <div class="card {{ card_class }} text-white">

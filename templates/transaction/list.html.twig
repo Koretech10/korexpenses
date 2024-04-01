@@ -63,7 +63,7 @@
                         {% set balanceColorClass = 'text-danger' %}
                     {% endif %}
                     <td class="{{ balanceColorClass }} font-weight-bold">
-                        {{ account.balance }} €
+                        {{ account.balance | format_number({fraction_digit: 2}) }} €
                     </td>
                 </tr>
                 <tr>
@@ -76,7 +76,7 @@
                         {% set forecastedBalanceColorClass = 'text-danger' %}
                     {% endif %}
                     <td class="{{ forecastedBalanceColorClass }} font-weight-bold">
-                        {{ forecastedBalance }} €
+                        {{ forecastedBalance | format_number({fraction_digit: 2}) }} €
                     </td>
                 </tr>
             </table>
@@ -103,11 +103,11 @@
                         </td>
                         {% if transaction.type == 0 %}
                             <td class="text-danger text-nowrap">
-                                - {{ transaction.value }} €
+                                - {{ transaction.value | format_number({fraction_digit: 2}) }} €
                             </td>
                         {% else %}
                             <td class="text-success text-nowrap">
-                                + {{ transaction.value }} €
+                                + {{ transaction.value | format_number({fraction_digit: 2}) }} €
                             </td>
                         {% endif %}
                     </tr>
