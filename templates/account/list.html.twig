@@ -30,7 +30,14 @@
                             {{ account.name }}
                         </a>
                     </td>
-                    <td>{{ account.balance }} €</td>
+                    {% if account.balance > 0 %}
+                        {% set balanceColorClass = 'text-success' %}
+                    {% else %}
+                        {% set balanceColorClass = 'text-danger' %}
+                    {% endif %}
+                    <td class="{{ balanceColorClass }}">
+                        {{ account.balance }} €
+                    </td>
                     <td>
                         <a href="{{ path('transaction_list', {
                             'account': account.id,
