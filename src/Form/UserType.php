@@ -40,8 +40,9 @@ class UserType extends AbstractType
             ]);
         }
 
-        $builder
-            ->add('roles', ChoiceType::class, [
+        // Affectation des rôles uniquement par les utilisateurs ROLE_ADMIN
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            $builder->add('roles', ChoiceType::class, [
                 'label' => 'Rôle',
                 'multiple' => true,
                 'expanded' => true,
@@ -52,11 +53,12 @@ class UserType extends AbstractType
                 'constraints' => [
                     new NotBlank()
                 ]
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Valider'
-            ])
-        ;
+            ]);
+        }
+
+        $builder->add('submit', SubmitType::class, [
+            'label' => 'Valider'
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
