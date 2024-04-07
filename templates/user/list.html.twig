@@ -3,7 +3,15 @@
 {% block title %}Utilisateurs{% endblock %}
 
 {% block actions %}
-
+    <a
+        class="btn btn-success"
+        href="{{ path('user_create') }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Créer utilisateur"
+    >
+        <i class="bi bi-plus"></i>
+    </a>
 {% endblock %}
 
 {% block body %}
