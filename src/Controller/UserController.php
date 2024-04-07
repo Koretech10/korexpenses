@@ -77,9 +77,43 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Éditer l'utilisateur $user
+     * @param Request $request
+     * @param User|null $user
+     * @return RedirectResponse|Response
+     */
     #[Route('/user/edit/admin/{id}', name: 'user_edit_admin', requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function editAsAdmin(Request $request, User $user = null)
+    public function editAsAdmin(Request $request, User $user = null): RedirectResponse|Response
+    {
+        // Vérification de l'existence de l'utilisateur demandé
+        if (!$user) {
+            $this->addFlash('danger', "Cet utilisateur n'existe pas.");
+            return $this->redirectToRoute('user_list');
+        }
+
+        $userForm = $this->createForm(UserType::class, $user);
+        $userForm->handleRequest($request);
+
+        if ($userForm->isSubmitted() && $userForm->isValid()) {
+            $user = $userForm->getData();
+
+            $this->em->flush();
+            $this->addFlash('success', 'Utilisateur modifié avec succès.');
+
+            return $this->redirectToRoute('user_list');
+        }
+
+        return $this->render('user/edit_as_admin.html.twig', [
+            'userForm' => $userForm->createView(),
+            'user' => $user
+        ]);
+    }
+
+    #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(User $user = null)
     {
     }
 }

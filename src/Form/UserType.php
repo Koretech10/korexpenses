@@ -17,23 +17,30 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('username', TextType::class, [
-                'label' => "Nom d'utilisateur"
-            ])
-            ->add('password', PasswordType::class, [
+        /** @var User $user */
+        $user = $builder->getData();
+
+        $builder->add('username', TextType::class, [
+            'label' => "Nom d'utilisateur"
+        ]);
+
+        if (!$user->getId()) { // En création uniquement
+            $builder->add('password', PasswordType::class, [
                 'label' => "Mot de passe",
                 'help' => "Doit répondre aux exigences de sécurité suivantes : 12 caractères minimum, au moins une 
-                           lettre minuscule, au moins une lettre MAJUSCULE, au moins un chiffre, au moins un de ces 
-                           caractères spéciaux : ! @ # $ % ^ & *
-                          ",
+                       lettre minuscule, au moins une lettre MAJUSCULE, au moins un chiffre, au moins un de ces 
+                       caractères spéciaux : ! @ # $ % ^ & *
+                      ",
                 'constraints' => [
                     new Regex([
                         'pattern' => '/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{12,})/',
                         'message' => 'Le mot de passe ne répond pas aux exigences de sécurité'
                     ])
                 ]
-            ])
+            ]);
+        }
+
+        $builder
             ->add('roles', ChoiceType::class, [
                 'label' => 'Rôle',
                 'multiple' => true,
