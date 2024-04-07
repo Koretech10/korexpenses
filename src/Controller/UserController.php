@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserPasswordType;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -77,6 +78,11 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/user/edit', name: 'user_edit')]
+    public function edit(Request $request)
+    {
+    }
+
     /**
      * Éditer l'utilisateur $user
      * @param Request $request
@@ -109,6 +115,51 @@ class UserController extends AbstractController
             'userForm' => $userForm->createView(),
             'user' => $user
         ]);
+    }
+
+    /**
+     * Éditer le mot de passe de l'utilisateur $user
+     * @param Request $request
+     * @param User|null $user
+     * @return RedirectResponse|Response
+     */
+    #[Route('/user/edit/password/{id}', name: 'user_edit_password', requirements: ['id' => '\d+'])]
+    public function editUserPassword(Request $request, User $user = null): RedirectResponse|Response
+    {
+        // Vérification de l'existence de l'utilisateur demandé
+        if (!$user) {
+            $this->addFlash('danger', "Cet utilisateur n'existe pas.");
+            return $this->redirectToRoute('user_list');
+        }
+
+        // N'autoriser l'accès que si l'utilisateur authentifié est l'utilisateur cible OU si l'utilisateur
+        // authentifié possède le rôle ROLE_ADMIN
+        if ($user === $this->getUser() || $this->isGranted('ROLE_ADMIN')) {
+            $passwordForm = $this->createForm(UserPasswordType::class);
+            $passwordForm->handleRequest($request);
+
+            if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
+                $password = $passwordForm->getData()['password'];
+                $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+
+                $this->em->flush();
+                $this->addFlash('success', 'Mot de passe modifié avec succès.');
+
+                // Redirection conditionnelle selon le rôle de l'utilisateur authentifié
+                return $this->isGranted('ROLE_ADMIN') ?
+                    $this->redirectToRoute('user_edit_admin', ['id' => $user->getId()]) :
+                    $this->redirectToRoute('user_edit')
+                ;
+            }
+
+            return $this->render('user/edit_password.html.twig', [
+                'passwordForm' => $passwordForm->createView(),
+                'user' => $user
+            ]);
+        }
+
+        $this->addFlash('danger', "Vous n'avez pas l'autorisation d'effectuer cette action.");
+        return $this->redirectToRoute('user_edit');
     }
 
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
