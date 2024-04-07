@@ -183,9 +183,25 @@ class UserController extends AbstractController
         return $this->redirectToRoute('user_edit');
     }
 
+    /**
+     * Supprimer l'utilisateur $user
+     * @param User|null $user
+     * @return RedirectResponse
+     */
     #[Route('/user/delete/{id}', name: 'user_delete', requirements: ['id' => '\d+'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(User $user = null)
+    public function delete(User $user = null): RedirectResponse
     {
+        // Vérification de l'existence de l'utilisateur demandé
+        if (!$user) {
+            $this->addFlash('danger', "Cet utilisateur n'existe pas.");
+            return $this->redirectToRoute('user_list');
+        }
+
+        $this->em->remove($user);
+        $this->em->flush();
+        $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+
+        return $this->redirectToRoute('user_list');
     }
 }
