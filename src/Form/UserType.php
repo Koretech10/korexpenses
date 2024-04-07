@@ -40,8 +40,8 @@ class UserType extends AbstractType
             ]);
         }
 
-        // Affectation des rôles uniquement par les utilisateurs ROLE_ADMIN
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+        // Affectation des rôles uniquement depuis certaines méthodes
+        if ($options['show_roles']) {
             $builder->add('roles', ChoiceType::class, [
                 'label' => 'Rôle',
                 'multiple' => true,
@@ -66,6 +66,7 @@ class UserType extends AbstractType
         $resolver
             ->setDefaults([
                 'data_class' => User::class,
+                'show_roles' => true
             ])
         ;
     }

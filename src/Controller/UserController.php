@@ -88,7 +88,10 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        $userForm = $this->createForm(UserType::class, $user);
+        // Ne pas laisser l'utilisateur changer son rôle depuis ce formulaire
+        $userForm = $this->createForm(UserType::class, $user, [
+            'show_roles' => false
+        ]);
         $userForm->handleRequest($request);
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
