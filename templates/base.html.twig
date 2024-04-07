@@ -33,9 +33,9 @@
         </ul>
         <ul class="navbar-nav" style="margin-right: 20px">
             <li class="nav-item">
-                <span class="nav-link">
-                    <i class="bi bi-person-fill"></i> Bonjour User
-                </span>
+                <a class="nav-link" href="{{ path('user_edit') }}">
+                    <i class="bi bi-person-fill"></i> Bonjour {{ app.user.username }}
+                </a>
             </li>
             <li>
                 <a class="nav-link" href="#">
