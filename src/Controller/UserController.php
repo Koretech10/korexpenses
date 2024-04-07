@@ -78,9 +78,30 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * Éditer l'utilisateur authentifié
+     * @param Request $request
+     * @return Response
+     */
     #[Route('/user/edit', name: 'user_edit')]
-    public function edit(Request $request)
+    public function edit(Request $request): Response
     {
+        $user = $this->getUser();
+
+        $userForm = $this->createForm(UserType::class, $user);
+        $userForm->handleRequest($request);
+
+        if ($userForm->isSubmitted() && $userForm->isValid()) {
+            $user = $userForm->getData();
+
+            $this->em->flush();
+            $this->addFlash('success', 'Utilisateur modifié avec succès.');
+        }
+
+        return $this->render('user/edit.html.twig', [
+            'userForm' => $userForm->createView(),
+            'user' => $user,
+        ]);
     }
 
     /**
