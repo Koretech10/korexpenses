@@ -28,6 +28,7 @@ class AccountController extends AbstractController
      * @return Response
      */
     #[Route('/account/list/{page}', name: 'account_list', requirements: ["page" => "\d+"])]
+    #[Route('/{page}', name: 'app_index', requirements: ['page' => '\d+'])]
     public function list(int $page = 1): Response
     {
         // Formulaire de création de compte bancaire

@@ -42,6 +42,16 @@ final class Version010 extends AbstractMigration
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');
         $this->addSql('
+            CREATE TABLE user (
+                id INT AUTO_INCREMENT NOT NULL,
+                username VARCHAR(180) NOT NULL,
+                roles JSON NOT NULL COMMENT \'(DC2Type:json)\',
+                password VARCHAR(255) NOT NULL,
+                UNIQUE INDEX UNIQ_8D93D649F85E0677 (username),
+                PRIMARY KEY(id)
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        ');
+        $this->addSql('
             CREATE TABLE messenger_messages (
                 id BIGINT AUTO_INCREMENT NOT NULL,
                 body LONGTEXT NOT NULL,
@@ -59,7 +69,7 @@ final class Version010 extends AbstractMigration
         ');
         $this->addSql('
             ALTER TABLE transaction
-            ADD CONSTRAINT FK_723705D19B6B5FBA FOREIGN KEY (account_id) REFERENCES account (id)
+            ADD CONSTRAINT FK_723705D19B6B5FBA FOREIGN KEY (account_id) REFERENCES account (id) ON DELETE CASCADE
         ');
     }
 
@@ -73,5 +83,6 @@ final class Version010 extends AbstractMigration
         $this->addSql('DROP TABLE account');
         $this->addSql('DROP TABLE transaction');
         $this->addSql('DROP TABLE messenger_messages');
+        $this->addSql('DROP TABLE user');
     }
 }

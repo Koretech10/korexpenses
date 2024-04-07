@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs / Édition{% endblock %}
+
+{% block actions %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a
+            class="btn btn-light"
+            href="{{ path('user_list') }}"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Retour vers Utilisateurs"
+        >
+            <i class="bi bi-arrow-left"></i>
+        </a>
+    {% endif %}
+    <a
+        class="btn btn-primary"
+        href="{{ path('user_edit_password', {'id': user.id}) }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Changer mot de passe"
+    >
+        <i class="bi bi-key-fill"></i>
+    </a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Supprimer utilisateur">
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+                <i class="bi bi-trash3-fill"></i>
+            </button>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% form_theme userForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+    {{ form(userForm) }}
+    {% embed 'modals/delete.html.twig' %}
+        {% block deleteModalId %}deleteModal{% endblock %}
+        {% block deleteModalTitle %}Supprimer cet utilisateur ?{% endblock %}
+        {% block deleteModalBody %}Êtes-vous sûr de vouloir supprimer cet utilisateur ?{% endblock %}
+        {% block deleteModalLink %}{{ path('user_delete', {'id': user.id}) }}{% endblock %}
+    {% endembed %}
+{% endblock %}
