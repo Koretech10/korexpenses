@@ -16,8 +16,12 @@
         <table class="table table-striped table-hover w-auto mx-auto">
             <thead class="thead-light">
                 <tr>
-                    <th>Nom</th>
-                    <th>Solde</th>
+                    <th>
+                        {{ knp_pagination_sortable(pagination, 'Nom', 'a.name') }}
+                    </th>
+                    <th>
+                        {{ knp_pagination_sortable(pagination, 'Solde', 'a.balance')}}
+                    </th>
                     <th>&nbsp; {# Lien vers opérations #}</th>
                 </tr>
             </thead>
