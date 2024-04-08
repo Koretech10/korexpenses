@@ -20,8 +20,10 @@
 {% endblock %}
 
 {% block body %}
-    {% form_theme accountForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
-    {{ form(accountForm) }}
+    <div class="col-12 col-md-5 mx-auto">
+        {% form_theme accountForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+        {{ form(accountForm) }}
+    </div>
 
     {# Modal de suppression #}
     {% embed 'modals/delete.html.twig' %}

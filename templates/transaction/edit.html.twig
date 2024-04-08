@@ -24,8 +24,11 @@
 {% endblock %}
 
 {% block body %}
-    {% form_theme transactionForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
-    {{ form(transactionForm) }}
+    <div class="col-12 col-md-6 mx-auto">
+        {% form_theme transactionForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+        {{ form(transactionForm) }}
+    </div>
+
     {% embed 'modals/delete.html.twig' %}
         {% block deleteModalId %}deleteModal{% endblock %}
         {% block deleteModalTitle %}Supprimer cette opération ?{% endblock %}
