@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Comptes bancaires / Édition{% endblock %}
+
+{% block actions %}
+    <a
+        class="btn btn-light"
+        href="{{ path('account_list') }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Retour vers Comptes bancaires"
+    >
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Supprimer compte bancaire">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="col-12 col-md-5 mx-auto">
+        {% form_theme accountForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+        {{ form(accountForm) }}
+    </div>
+
+    {# Modal de suppression #}
+    {% embed 'modals/delete.html.twig' %}
+        {% block deleteModalId %}deleteModal{% endblock %}
+        {% block deleteModalTitle %}Supprimer ce compte bancaire ?{% endblock %}
+        {% block deleteModalBody %}
+            <p>Êtes-vous sûr de vouloir supprimer ce compte bancaire ?</p>
+            <p class="text-danger font-weight-bold">Attention ! Cela supprimera les opérations liées à ce compte !</p>
+        {% endblock %}
+        {% block deleteModalLink %}{{ path('account_delete', {'id': account.id}) }}{% endblock %}
+    {% endembed %}
+{% endblock %}

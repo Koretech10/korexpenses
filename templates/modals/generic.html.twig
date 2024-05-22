@@ -1,0 +1,23 @@
+<div class="modal fade" id="{% block modalId %}{% endblock %}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                {% block modalHeader %}{% endblock %}
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                {% block modalBody %}
+                {% endblock %}
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                {% block modalFooter %}{% endblock %}
+            </div>
+
+        </div>
+    </div>
+</div>

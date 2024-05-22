@@ -23,8 +23,17 @@ class Transaction
     #[ORM\Column]
     private ?float $value = null;
 
+    /**
+     * 0 = Débit
+     * 1 = Crédit
+     * @var int|null
+     */
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $type = null;
+
+    #[ORM\ManyToOne(inversedBy: 'transactions')]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    private ?Account $account = null;
 
     public function getId(): ?int
     {
@@ -75,6 +84,18 @@ class Transaction
     public function setType(int $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(?Account $account): static
+    {
+        $this->account = $account;
 
         return $this;
     }

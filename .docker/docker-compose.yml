@@ -1,0 +1,57 @@
+version: '3'
+services:
+  db:
+    image: mariadb:10.6
+    container_name: mariadb
+    hostname: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: korexpenses
+      MYSQL_USER: korexpenses
+      MYSQL_PASSWORD: korexpenses
+    networks:
+      - korexpenses_network
+    volumes:
+      - db_volume:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: korexpenses
+    container_name: korexpenses
+    hostname: korexpenses
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DOMAIN_NAME: korexpenses.local
+      APP_SECRET: thisI$ASup€rS3cret
+      ROOT_PWD: "!R00tR00tR00tR00t!"
+      DB_USER: korexpenses
+      DB_PASS: korexpenses
+      DB_HOSTNAME: mariadb
+      DB_PORT: 3306
+      DB_NAME: korexpenses
+      DB_SERVER_VERSION: 10.6.17-MariaDB
+    networks:
+      - korexpenses_network
+    ports:
+      - 80:80
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+volumes:
+  db_volume:
+
+networks:
+  korexpenses_network:
+    driver: bridge

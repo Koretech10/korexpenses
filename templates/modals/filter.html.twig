@@ -1,0 +1,24 @@
+{% extends 'modals/generic.html.twig' %}
+
+{% block modalId %}{% block filterModalId %}{% endblock %}{% endblock %}
+
+{% block modalHeader %}
+    <h4 class="modal-title">{% block filterModalTitle %}Filtrer{% endblock %}</h4>
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+{% endblock %}
+
+{% block modalBody %}
+    {% block filterModalBody %}
+        {% form_theme filterForm 'bootstrap_4_layout.html.twig' %}
+        {{ form(filterForm) }}
+    {% endblock %}
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-light" data-dismiss="modal">
+        <i class="bi bi-arrow-left"></i> Retour
+    </button>
+    <a href="{% block filterModalCancelPath %}{% endblock %}" class="btn btn-danger">
+        <i class="bi bi-x-lg"></i> Annuler le filtrage
+    </a>
+{% endblock %}

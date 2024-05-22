@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Opérations / Édition{% endblock %}
+
+{% block actions %}
+    <a
+        class="btn btn-light"
+        href="{{ path('transaction_list', {
+            'account': transaction.account.id,
+            'year': transaction.date | date('Y'),
+            'month': transaction.date | date('m')
+        }) }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Retour vers Opérations"
+    >
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Supprimer opération">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="col-12 col-md-6 mx-auto">
+        {% form_theme transactionForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
+        {{ form(transactionForm) }}
+    </div>
+
+    {% embed 'modals/delete.html.twig' %}
+        {% block deleteModalId %}deleteModal{% endblock %}
+        {% block deleteModalTitle %}Supprimer cette opération ?{% endblock %}
+        {% block deleteModalBody %}Êtes-vous sûr de vouloir supprimer cette opération ?{% endblock %}
+        {% block deleteModalLink %}{{ path('transaction_delete', {'id': transaction.id}) }}{% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
