@@ -9,6 +9,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -30,12 +31,26 @@ class RootManageCommand extends Command
     protected function configure(): void
     {
         $this
+            ->addOption(
+                'create-only',
+                'c',
+                InputOption::VALUE_NONE,
+                "Créer le compte root uniquement. S'il existe déjà, le mot de passe ne sera pas modifié."
+            )
             ->addArgument('password', InputArgument::OPTIONAL, "Nouveau mot de passe de root")
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $root = $this->userRepository->findOneBy(['username' => 'root']);
+        if ($root && $input->getOption('create-only')) {
+            $output->writeln("<comment>Le compte root existe déjà et l'option --create-only est active.</comment>");
+            $output->writeln("<comment>Le mot de passe root n'a pas été modifié.</comment>");
+
+            return Command::SUCCESS;
+        }
+
         $password = $input->getArgument('password');
         $isPasswordOk = preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{16,})/", $password);
 
@@ -77,7 +92,6 @@ class RootManageCommand extends Command
             $password = $helper->ask($input, $output, $passwordQuestion);
         }
 
-        $root = $this->userRepository->findOneBy(['username' => 'root']);
         if (!$root) { // Créer l'utilisateur root car il n'existe pas
             $output->writeln("<comment>Le compte root n'existe pas. Il va être créé.</comment>");
             $root = new User();
