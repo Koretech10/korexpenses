@@ -9,10 +9,8 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
@@ -32,44 +30,52 @@ class RootManageCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
+            ->addArgument('password', InputArgument::OPTIONAL, "Nouveau mot de passe de root")
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Conditions à respecter pour le mot de passe
-        $output->writeln([
-            "Vous êtes sur le point d'initialiser ou de modifier le mot de passe du compte root de l'application.",
-            "Ce mot de passe doit répondre aux exigences de sécurité suivantes :",
-            "    - 16 caractères minimum",
-            "    - Au moins une lettre minuscule",
-            "    - Au moins une lettre MAJUSCULE",
-            "    - Au moins un chiffre",
-            "    - Au moins un de ces caractères spéciaux : ! @ # $ % ^ & *"
-        ]);
+        $password = $input->getArgument('password');
+        $isPasswordOk = preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{16,})/", $password);
 
-        // Pose la question
-        $helper = $this->getHelper('question');
-        $passwordQuestion = new Question('<question>Entrez le nouveau mot de passe root :</question> ');
+        if (!$password || !$isPasswordOk) {
+            if (!$isPasswordOk) {
+                $output->writeln('<error>Le mot de passe ne répond pas aux exigences de sécurité.</error>');
+            }
 
-        // Configure la confidentialité, la validation et l'infinité de la question
-        $passwordQuestion
-            ->setHidden(true)
-            ->setHiddenFallback(false)
-            ->setValidator(function (?string $value): string {
-                if (preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{16,})/", $value)) {
-                    return $value;
-                }
+            // Conditions à respecter pour le mot de passe
+            $output->writeln([
+                "Vous êtes sur le point d'initialiser ou de modifier le mot de passe du compte root de l'application.",
+                "Ce mot de passe doit répondre aux exigences de sécurité suivantes :",
+                "    - 16 caractères minimum",
+                "    - Au moins une lettre minuscule",
+                "    - Au moins une lettre MAJUSCULE",
+                "    - Au moins un chiffre",
+                "    - Au moins un de ces caractères spéciaux : ! @ # $ % ^ & *"
+            ]);
 
-                throw new \Exception('Le mot de passe ne répond pas aux exigences de sécurité.');
-            })
-            ->setMaxAttempts(null)
-        ;
+            // Pose la question
+            $helper = $this->getHelper('question');
+            $passwordQuestion = new Question('<question>Entrez le nouveau mot de passe root :</question> ');
 
-        // Enregistrer la réponse
-        $password = $helper->ask($input, $output, $passwordQuestion);
+            // Configure la confidentialité, la validation et l'infinité de la question
+            $passwordQuestion
+                ->setHidden(true)
+                ->setHiddenFallback(false)
+                ->setValidator(function (?string $value): string {
+                    if (preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{16,})/", $value)) {
+                        return $value;
+                    }
+
+                    throw new \Exception('Le mot de passe ne répond pas aux exigences de sécurité.');
+                })
+                ->setMaxAttempts(null)
+            ;
+
+            // Enregistrer la réponse
+            $password = $helper->ask($input, $output, $passwordQuestion);
+        }
 
         $root = $this->userRepository->findOneBy(['username' => 'root']);
         if (!$root) { // Créer l'utilisateur root car il n'existe pas
