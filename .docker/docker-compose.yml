@@ -10,12 +10,11 @@ services:
       MYSQL_DATABASE: korexpenses
       MYSQL_USER: korexpenses
       MYSQL_PASSWORD: korexpenses
+      TZ: Europe/Paris
     networks:
       - korexpenses_network
     volumes:
       - db_volume:/var/lib/mysql
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
       start_period: 5s
@@ -41,13 +40,11 @@ services:
       DB_PORT: 3306
       DB_NAME: korexpenses
       DB_SERVER_VERSION: 10.6.17-MariaDB
+      TZ: Europe/Paris
     networks:
       - korexpenses_network
     ports:
       - 80:80
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
 
 volumes:
   db_volume:
