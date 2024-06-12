@@ -24,7 +24,7 @@ services:
       retries: 10
 
   app:
-    image: korexpenses
+    image: korexpenses:latest
     container_name: korexpenses
     hostname: korexpenses
     restart: always
