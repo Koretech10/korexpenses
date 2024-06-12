@@ -45,8 +45,6 @@ RUN a2enmod rewrite
 # Clonage des sources
 RUN git clone https://github.com/Koretech10/korexpenses.git /app
 WORKDIR /app
-# Temporaire
-RUN git checkout dockerization
 
 # Copie des fichiers d'environnement
 COPY app/.env /app/.env
