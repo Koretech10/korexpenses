@@ -17,7 +17,7 @@ class MonthlyTransactionController extends AbstractController
      * @param int $page
      */
     #[Route(
-        '/transaction/list/{account}/{page}',
+        '/transaction/monthly/list/{account}/{page}',
         name: 'monthly_transaction_list',
         requirements: ['account' => '\d+', 'page' => '\d'],
     )]
@@ -32,7 +32,7 @@ class MonthlyTransactionController extends AbstractController
      * @param int $page
      */
     #[Route(
-        '/transaction/filter/{account}/{page}',
+        '/transaction/monthly/filter/{account}/{page}',
         name: 'monthly_transaction_filter',
         requirements: ['account' => '\d+', 'page' => '\d'],
     )]
