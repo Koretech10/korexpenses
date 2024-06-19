@@ -8,6 +8,11 @@
             <i class="bi bi-plus"></i>
         </button>
     </div>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Filtrer">
+        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#filterModal">
+            <i class="bi bi-funnel"></i>
+        </button>
+    </div>
 {% endblock %}
 
 {% block body %}
@@ -66,5 +71,56 @@
                 <i class="bi bi-arrow-left"></i> Retour
             </button>
         {% endblock %}
+    {% endembed %}
+
+    {# Modal de filtrage #}
+    {% embed 'modals/filter.html.twig' %}
+        {% block filterModalId %}filterModal{% endblock %}
+        {% block filterModalBody %}
+            {{ form_start(filterForm) }}
+            <div class="form-group">
+                <label>Jour de l'occurrence</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Entre le</label>
+                    </div>
+                    <div class="col-6">
+                        <label>et le</label>
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.dayFrom) }}
+                        {{ form_errors(filterForm.dayFrom) }}
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.dayTo) }}
+                        {{ form_errors(filterForm.dayTo) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_row(filterForm.description) }}
+            {{ form_row(filterForm.type) }}
+            <div class="form-group">
+                <label>Valeur de l'opération</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Entre</label>
+                    </div>
+                    <div class="col-6">
+                        <label>et</label>
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.valueFrom) }}
+                        {{ form_errors(filterForm.valueFrom) }}
+                    </div>
+                    <div class="col-6">
+                        {{ form_widget(filterForm.valueTo) }}
+                        {{ form_errors(filterForm.valueTo) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_rest(filterForm) }}
+            {{ form_end(filterForm) }}
+        {% endblock %}
+        {% block filterModalCancelPath %}{{ path('monthly_transaction_list', {'account': account.id}) }}{% endblock %}
     {% endembed %}
 {% endblock %}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Account;
 use App\Entity\MonthlyTransaction;
+use App\Form\Filter\MonthlyTransactionFilterType;
 use App\Form\MonthlyTransactionType;
 use App\Repository\MonthlyTransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,7 @@ class MonthlyTransactionController extends AbstractController
 
     /**
      * Lister les opérations mensuelles
+     * @param Request $request
      * @param Account|null $account
      * @param int $page
      * @return RedirectResponse|Response
@@ -34,7 +36,7 @@ class MonthlyTransactionController extends AbstractController
         name: 'monthly_transaction_list',
         requirements: ['account' => '\d+', 'page' => '\d'],
     )]
-    public function list(Account $account = null, int $page = 1): RedirectResponse|Response
+    public function list(Request $request, Account $account = null, int $page = 1): RedirectResponse|Response
     {
         // Vérification de l'existence du compte bancaire demandé
         if (!$account) {
@@ -50,33 +52,32 @@ class MonthlyTransactionController extends AbstractController
             ])
         ]);
 
+        // Formulaire de filtrage
+        $filterForm = $this->createForm(MonthlyTransactionFilterType::class, null);
+        $filterForm->handleRequest($request);
+
+        // Choix de la requête selon la présence de filtrage ou pas
+        $monthlyTransactionQuery = $this->monthlyTransactionRepository->getAllMonthlyTransactionsForAccount($account);
+        if ($filterForm->isSubmitted() && $filterForm->isValid()) {
+            $monthlyTransactionQuery = $this->monthlyTransactionRepository->filterMonthlyTransactionsForAccount(
+                $account,
+                $filterForm->getData()
+            );
+        }
+
         // Pagination des opérations mensuelles demandées
         $pagination = $this->pager->paginate(
-            $this->monthlyTransactionRepository->getAllMonthlyTransactions(),
+            $monthlyTransactionQuery,
             $page,
             100
         );
 
         return $this->render('monthly_transaction/list.html.twig', [
             'newMonthlyTransactionForm' => $newMonthlyTransactionForm->createView(),
+            'filterForm' => $filterForm->createView(),
             'pagination' => $pagination,
             'account' => $account,
         ]);
-    }
-
-    /**
-     * Filtrer les opérations mensuelles selon la requête dans le GET
-     * @param Request $request
-     * @param Account|null $account
-     * @param int $page
-     */
-    #[Route(
-        '/transaction/monthly/filter/{account}/{page}',
-        name: 'monthly_transaction_filter',
-        requirements: ['account' => '\d+', 'page' => '\d'],
-    )]
-    public function filter(Request $request, Account $account = null, int $page = 1)
-    {
     }
 
     /**
