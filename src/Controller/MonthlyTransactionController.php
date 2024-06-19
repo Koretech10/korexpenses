@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Account;
 use App\Entity\MonthlyTransaction;
 use App\Form\MonthlyTransactionType;
+use App\Repository\MonthlyTransactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,8 @@ class MonthlyTransactionController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
+        private readonly PaginatorInterface $pager,
+        private readonly MonthlyTransactionRepository $monthlyTransactionRepository,
     ) {
     }
 
@@ -46,8 +50,17 @@ class MonthlyTransactionController extends AbstractController
             ])
         ]);
 
+        // Pagination des opérations mensuelles demandées
+        $pagination = $this->pager->paginate(
+            $this->monthlyTransactionRepository->getAllMonthlyTransactions(),
+            $page,
+            100
+        );
+
         return $this->render('monthly_transaction/list.html.twig', [
             'newMonthlyTransactionForm' => $newMonthlyTransactionForm->createView(),
+            'pagination' => $pagination,
+            'account' => $account,
         ]);
     }
 

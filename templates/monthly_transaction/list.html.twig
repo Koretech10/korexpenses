@@ -11,6 +11,46 @@
 {% endblock %}
 
 {% block body %}
+    {% embed 'pager.html.twig' %}{% endembed %}
+    <div class="col-12 table-responsive">
+        <table class="table table-striped table-hover w-auto mx-auto">
+            <thead class="thead-light">
+            <tr>
+                <th>
+                    {{ knp_pagination_sortable(pagination, "Jour de l'occurrence", 'mt.day') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Libellé', 'mt.description') }}
+                </th>
+                <th>Valeur</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for monthlyTransaction in pagination %}
+                {# @var \App\Entity\MonthlyTransaction monthlyTransaction #}
+                <tr>
+                    <td>{{ monthlyTransaction.day }} du mois</td>
+                    <td>
+                        <a href="{{ path('monthly_transaction_edit', {'id': monthlyTransaction.id}) }}">
+                            {{ monthlyTransaction.description }}
+                        </a>
+                    </td>
+                    {% if monthlyTransaction.type == 0 %}
+                        <td class="text-danger text-nowrap">
+                            - {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
+                        </td>
+                    {% else %}
+                        <td class="text-success text-nowrap">
+                            + {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% embed 'pager.html.twig' %}{% endembed %}
+
     {# Modal de création d'opération #}
     {% embed 'modals/generic.html.twig' %}
         {% block modalId %}createModal{% endblock %}
@@ -27,8 +67,4 @@
             </button>
         {% endblock %}
     {% endembed %}
-{% endblock %}
-
-{% block javascripts %}
-
 {% endblock %}
