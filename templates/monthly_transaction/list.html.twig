@@ -3,6 +3,15 @@
 {% block title %}Opérations mensuelles{% endblock %}
 
 {% block actions %}
+    <a
+        class="btn btn-light"
+        href="{{ path('account_list') }}"
+        data-toggle="tooltip"
+        data-placement="bottom"
+        title="Retour vers Comptes bancaires"
+    >
+        <i class="bi bi-arrow-left"></i>
+    </a>
     <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Créer opération mensuelle">
         <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createModal">
             <i class="bi bi-plus"></i>
