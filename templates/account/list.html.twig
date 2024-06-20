@@ -43,12 +43,25 @@
                         {{ account.balance | format_number({fraction_digit: 2}) }} €
                     </td>
                     <td>
-                        <a href="{{ path('transaction_list', {
-                            'account': account.id,
-                            'year': 'now' | date('Y'),
-                            'month': 'now' | date('m')
-                        }) }}">
+                        <a
+                            href="{{ path('transaction_list', {
+                                'account': account.id,
+                                'year': 'now' | date('Y'),
+                                'month': 'now' | date('m')
+                            }) }}"
+                            data-toggle="tooltip"
+                            data-placement="bottom"
+                            title="Opérations"
+                        >
                             <i class="bi bi-arrow-left-right"></i>
+                        </a>
+                        <a
+                            href="{{ path('monthly_transaction_list', {'account': account.id,}) }}"
+                            data-toggle="tooltip"
+                            data-placement="bottom"
+                            title="Opérations mensuelles"
+                        >
+                            <i class="bi bi-calendar-week"></i>
                         </a>
                     </td>
                 </tr>
