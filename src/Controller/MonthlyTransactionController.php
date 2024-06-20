@@ -53,7 +53,7 @@ class MonthlyTransactionController extends AbstractController
         ]);
 
         // Formulaire de filtrage
-        $filterForm = $this->createForm(MonthlyTransactionFilterType::class, null);
+        $filterForm = $this->createForm(MonthlyTransactionFilterType::class);
         $filterForm->handleRequest($request);
 
         // Choix de la requête selon la présence de filtrage ou pas
