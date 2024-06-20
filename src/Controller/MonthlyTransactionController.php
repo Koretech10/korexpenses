@@ -163,15 +163,31 @@ class MonthlyTransactionController extends AbstractController
     }
 
     /**
-     * Supprimer l'opération
+     * Supprimer l'opération mensuelle
      * @param MonthlyTransaction|null $monthlyTransaction
+     * @return RedirectResponse
      */
     #[Route(
         '/transaction/monthly/delete/{id}',
         name: 'monthly_transaction_delete',
         requirements: ['id' => '\d+']
     )]
-    public function delete(MonthlyTransaction $monthlyTransaction = null)
+    public function delete(MonthlyTransaction $monthlyTransaction = null): RedirectResponse
     {
+        // Vérification de l'existence de l'opération mensuelle demandée
+        if (!$monthlyTransaction) {
+            $this->addFlash('danger', "Cette opération mensuelle n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
+        $account = $monthlyTransaction->getAccount();
+
+        $this->em->remove($monthlyTransaction);
+        $this->em->flush();
+        $this->addFlash('success', 'Opération mensuelle supprimée avec succès.');
+
+        return $this->redirectToRoute('monthly_transaction_list', [
+            'account' => $account->getId(),
+        ]);
     }
 }

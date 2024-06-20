@@ -12,6 +12,11 @@
     >
         <i class="bi bi-arrow-left"></i>
     </a>
+    <div class="btn-group" role="group" data-toggle="tooltip" data-placement="bottom" title="Supprimer opération mensuelle">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </div>
 {% endblock %}
 
 {% block body %}
@@ -19,4 +24,11 @@
         {% form_theme monthlyTransactionForm 'form/bootstrap_4_horizontal_layout.html.twig' %}
         {{ form(monthlyTransactionForm) }}
     </div>
+
+    {% embed 'modals/delete.html.twig' %}
+        {% block deleteModalId %}deleteModal{% endblock %}
+        {% block deleteModalTitle %}Supprimer cette opération mensuelle ?{% endblock %}
+        {% block deleteModalBody %}Êtes-vous sûr de vouloir supprimer cette opération mensuelle ?{% endblock %}
+        {% block deleteModalLink %}{{ path('monthly_transaction_delete', {'id': monthlyTransaction.id}) }}{% endblock %}
+    {% endembed %}
 {% endblock %}
