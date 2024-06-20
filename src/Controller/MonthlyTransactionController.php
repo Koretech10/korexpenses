@@ -126,14 +126,40 @@ class MonthlyTransactionController extends AbstractController
      * Éditer l'opération mensuelle $monthlyTransaction
      * @param Request $request
      * @param MonthlyTransaction|null $monthlyTransaction
+     * @return RedirectResponse|Response
      */
     #[Route(
         '/transaction/monthly/edit/{id}',
         name: 'monthly_transaction_edit',
         requirements: ['id' => '\d+']
     )]
-    public function edit(Request $request, MonthlyTransaction $monthlyTransaction = null)
+    public function edit(Request $request, MonthlyTransaction $monthlyTransaction = null): RedirectResponse|Response
     {
+        // Vérification de l'existence de l'opération mensuelle demandée
+        if (!$monthlyTransaction) {
+            $this->addFlash('danger', "Cette opération mensuelle n'existe pas.");
+            return $this->redirectToRoute('account_list');
+        }
+
+        $monthlyTransactionForm = $this->createForm(MonthlyTransactionType::class, $monthlyTransaction);
+        $monthlyTransactionForm->handleRequest($request);
+
+        if ($monthlyTransactionForm->isSubmitted() && $monthlyTransactionForm->isValid()) {
+            /** @var MonthlyTransaction $monthlyTransaction */
+            $monthlyTransaction = $monthlyTransactionForm->getData();
+
+            $this->em->flush();
+            $this->addFlash('success', 'Opération mensuelle modifiée avec succès.');
+
+            return $this->redirectToRoute('monthly_transaction_list', [
+                'account' => $monthlyTransaction->getAccount()->getId(),
+            ]);
+        }
+
+        return $this->render('monthly_transaction/edit.html.twig', [
+            'monthlyTransaction' => $monthlyTransaction,
+            'monthlyTransactionForm' => $monthlyTransactionForm->createView(),
+        ]);
     }
 
     /**
