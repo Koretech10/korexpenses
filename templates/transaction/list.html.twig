@@ -96,12 +96,12 @@
                 <thead class="thead-light">
                 <tr>
                     <th>
-                        {{ knp_pagination_sortable(pagination, 'Date', 't.date') }}
+                        {{ knp_pagination_sortable(pagination, 'Date', '[date]') }}
                     </th>
                     <th>
-                        {{ knp_pagination_sortable(pagination, 'Libellé', 't.description') }}
+                        {{ knp_pagination_sortable(pagination, 'Libellé', '[description]') }}
                     </th>
-                    <th>Valeur</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'Valeur', '[value]') }}</th>
                 </tr>
                 </thead>
                 <tbody>

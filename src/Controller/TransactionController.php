@@ -88,7 +88,8 @@ class TransactionController extends AbstractController
         $pagination = $this->pager->paginate(
             $regroupedTransactions,
             $page,
-            100
+            100,
+            ['defaultSortFieldName' => '[date]']
         );
 
         // Récupération du solde prévu en fin de mois
