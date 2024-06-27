@@ -73,13 +73,17 @@ class TransactionController extends AbstractController
             ])
         ]);
 
+        $upcomingMonthlyTransactions = $this
+            ->monthlyTransactionRepository
+            ->getUpcomingMonthlyTransactionsForAccount($account, $year, $month)
+        ;
         $regroupedTransactions = $this->regroupTransactionsAndMonthlyTransactions(
             $this
                 ->transactionRepository
                 ->getAllTransactionsForAccountAndMonth($account, $year, $month)
                 ->getQuery()
                 ->getResult(),
-            $this->monthlyTransactionRepository->getUpcomingMonthlyTransactionsForAccount($account, $year, $month),
+            $upcomingMonthlyTransactions,
             $year,
             $month
         );
@@ -93,19 +97,21 @@ class TransactionController extends AbstractController
         );
 
         // Récupération du solde prévu en fin de mois
-        $futureTransactions = $this
-            ->transactionRepository
-            ->filterTransactionsForAccount($account, [
-                'description' => '',
-                'dateFrom' => new DateTimeImmutable(),
-                'dateTo' => $currentMonth->modify('last day of this month'),
-                'type' => [],
-                'valueFrom' => null,
-                'valueTo' => null
-            ])
-            ->getQuery()
-            ->getResult()
-        ;
+        $futureTransactions = array_merge(
+            $this
+                ->transactionRepository
+                ->filterTransactionsForAccount($account, [
+                    'description' => '',
+                    'dateFrom' => new DateTimeImmutable(),
+                    'dateTo' => $currentMonth->modify('last day of this month'),
+                    'type' => [],
+                    'valueFrom' => null,
+                    'valueTo' => null
+                ])
+                ->getQuery()
+                ->getResult(),
+            $upcomingMonthlyTransactions
+        );
         $forecastedBalance = $this->balanceUpdater->getBalanceForecast($account, $futureTransactions);
 
         return $this->render('transaction/list.html.twig', [
