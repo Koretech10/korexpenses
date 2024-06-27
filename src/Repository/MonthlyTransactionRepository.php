@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use App\Entity\MonthlyTransaction;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,33 @@ class MonthlyTransactionRepository extends ServiceEntityRepository
             ->orderBy('mt.day', 'ASC')
             ->addOrderBy('mt.description', 'ASC')
         ;
+    }
+
+    /**
+     * Retourne les opérations mensuelles à venir pour le mois $month $year
+     * @param Account $account
+     * @param int $year
+     * @param string $month
+     * @return array
+     */
+    public function getUpcomingMonthlyTransactionsForAccount(Account $account, int $year, string $month): array
+    {
+        $monthlyTransactionsForAccount = $this
+            ->getAllMonthlyTransactionsForAccount($account)
+            ->getQuery()
+            ->getResult()
+        ;
+        $today = (new DateTime())->format('Ymd');
+
+        $upcomingMonthlyTransactions = [];
+        foreach ($monthlyTransactionsForAccount as $monthlyTransaction) {
+            $monthlyTransactionDate = $year . $month . str_pad($monthlyTransaction->getDay(), 2, '0', STR_PAD_LEFT);
+            if ($monthlyTransactionDate > $today) {
+                $upcomingMonthlyTransactions[] = $monthlyTransaction;
+            }
+        }
+
+        return $upcomingMonthlyTransactions;
     }
 
     /**
