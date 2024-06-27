@@ -96,33 +96,40 @@
                 <thead class="thead-light">
                 <tr>
                     <th>
-                        {{ knp_pagination_sortable(pagination, 'Date', 't.date') }}
+                        {{ knp_pagination_sortable(pagination, 'Date', '[date]') }}
                     </th>
                     <th>
-                        {{ knp_pagination_sortable(pagination, 'Libellé', 't.description') }}
+                        {{ knp_pagination_sortable(pagination, 'Libellé', '[description]') }}
                     </th>
-                    <th>Valeur</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'Valeur', '[value]') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for transaction in pagination %}
-                    {# @var \App\Entity\Transaction transaction #}
+                    {% if transaction.type is transaction %}
+                        {% set opacity = 'opacity-0' %}
+                        {% set editPath = 'transaction_edit' %}
+                    {% else %}
+                        {% set opacity = '' %}
+                        {% set editPath = 'monthly_transaction_edit' %}
+                    {% endif %}
                     <tr>
-                        <td>{{ transaction.date | date('d/m/Y') }}</td>
                         <td>
-                            <a href="{{ path('transaction_edit', {'id': transaction.id}) }}">
+                            <i class="bi bi-calendar-week {{ opacity }}"></i> {{ transaction.date | date('d/m/Y') }}
+                        </td>
+                        <td>
+                            <a href="{{ path(editPath, {'id': transaction.id}) }}">
                                 {{ transaction.description }}
                             </a>
                         </td>
-                        {% if transaction.type == 0 %}
-                            <td class="text-danger text-nowrap">
-                                - {{ transaction.value | format_number({fraction_digit: 2}) }} €
-                            </td>
-                        {% else %}
-                            <td class="text-success text-nowrap">
-                                + {{ transaction.value | format_number({fraction_digit: 2}) }} €
-                            </td>
-                        {% endif %}
+                    {% if transaction.value < 0 %}
+                        <td class="text-danger text-nowrap">
+                            {{ transaction.value | format_number({fraction_digit: 2}) }} €
+                    {% else %}
+                        <td class="text-success text-nowrap">
+                            +{{ transaction.value | format_number({fraction_digit: 2}) }} €
+                    {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

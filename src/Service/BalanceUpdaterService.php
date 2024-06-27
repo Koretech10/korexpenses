@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Account;
+use App\Entity\MonthlyTransaction;
 use App\Entity\Transaction;
 use App\Repository\AccountRepository;
 use App\Repository\TransactionRepository;
@@ -148,10 +149,10 @@ class BalanceUpdaterService
 
     /**
      * Retourne la valeur d'une transaction selon son type
-     * @param Transaction $transaction
+     * @param Transaction|MonthlyTransaction $transaction
      * @return float
      */
-    private function getValueFromTransaction(Transaction $transaction): float
+    private function getValueFromTransaction(Transaction|MonthlyTransaction $transaction): float
     {
         $transaction->getType() === 0 ?
             $value = -$transaction->getValue() :

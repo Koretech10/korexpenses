@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Entity\MonthlyTransaction;
 use App\Entity\Transaction;
 use App\Form\Filter\TransactionFilterType;
 use App\Form\TransactionType;
+use App\Repository\MonthlyTransactionRepository;
 use App\Repository\TransactionRepository;
 use App\Service\BalanceUpdaterService;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -22,6 +25,7 @@ class TransactionController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly TransactionRepository $transactionRepository,
+        private readonly MonthlyTransactionRepository $monthlyTransactionRepository,
         private readonly PaginatorInterface $pager,
         private readonly BalanceUpdaterService $balanceUpdater
     ) {
@@ -69,27 +73,45 @@ class TransactionController extends AbstractController
             ])
         ]);
 
+        $upcomingMonthlyTransactions = $this
+            ->monthlyTransactionRepository
+            ->getUpcomingMonthlyTransactionsForAccount($account, $year, $month)
+        ;
+        $regroupedTransactions = $this->regroupTransactionsAndMonthlyTransactions(
+            $this
+                ->transactionRepository
+                ->getAllTransactionsForAccountAndMonth($account, $year, $month)
+                ->getQuery()
+                ->getResult(),
+            $upcomingMonthlyTransactions,
+            $year,
+            $month
+        );
+
         // Pagination des opérations demandées
         $pagination = $this->pager->paginate(
-            $this->transactionRepository->getAllTransactionsForAccountAndMonth($account, $year, $month),
+            $regroupedTransactions,
             $page,
-            100
+            100,
+            ['defaultSortFieldName' => '[date]']
         );
 
         // Récupération du solde prévu en fin de mois
-        $futureTransactions = $this
-            ->transactionRepository
-            ->filterTransactionsForAccount($account, [
-                'description' => '',
-                'dateFrom' => new DateTimeImmutable(),
-                'dateTo' => $currentMonth->modify('last day of this month'),
-                'type' => [],
-                'valueFrom' => null,
-                'valueTo' => null
-            ])
-            ->getQuery()
-            ->getResult()
-        ;
+        $futureTransactions = array_merge(
+            $this
+                ->transactionRepository
+                ->filterTransactionsForAccount($account, [
+                    'description' => '',
+                    'dateFrom' => new DateTimeImmutable(),
+                    'dateTo' => $currentMonth->modify('last day of this month'),
+                    'type' => [],
+                    'valueFrom' => null,
+                    'valueTo' => null
+                ])
+                ->getQuery()
+                ->getResult(),
+            $upcomingMonthlyTransactions
+        );
         $forecastedBalance = $this->balanceUpdater->getBalanceForecast($account, $futureTransactions);
 
         return $this->render('transaction/list.html.twig', [
@@ -301,5 +323,68 @@ class TransactionController extends AbstractController
         }
 
         return $groupedTransactions;
+    }
+
+    /**
+     * Regroupe les opérations et les opérations récurrentes et les trie par jour
+     * @param array $transactionsQuery
+     * @param array $monthlyTransactionsQuery
+     * @param int $year
+     * @param string $month
+     * @return array
+     */
+    private function regroupTransactionsAndMonthlyTransactions(
+        array $transactionsQuery,
+        array $monthlyTransactionsQuery,
+        int $year,
+        string $month
+    ): array {
+        $allTransactions = [];
+
+        foreach ($transactionsQuery as $transaction) {
+            /** @var Transaction $transaction */
+            $value = $transaction->getType() === 0 ? -$transaction->getValue() : $transaction->getValue();
+
+            $allTransactions[] = [
+                'type' => Transaction::class,
+                'id' => $transaction->getId(),
+                'description' => $transaction->getDescription(),
+                'date' => $transaction->getDate(),
+                'value' => $value
+            ];
+        }
+        foreach ($monthlyTransactionsQuery as $monthlyTransaction) {
+            /** @var MonthlyTransaction $monthlyTransaction */
+            $value = $monthlyTransaction->getType() === 0 ?
+                -$monthlyTransaction->getValue() :
+                $monthlyTransaction->getValue()
+            ;
+            $dayWithLeadingZero = str_pad($monthlyTransaction->getDay(), 2, '0', STR_PAD_LEFT);
+            $date = checkdate((int) $month, $monthlyTransaction->getDay(), $year) ?
+                new DateTime("$year-$month-$dayWithLeadingZero") :
+                $this->getLastDayOfMonth($year, $month)
+            ;
+
+            $allTransactions[] = [
+                'type' => MonthlyTransaction::class,
+                'id' => $monthlyTransaction->getId(),
+                'description' => $monthlyTransaction->getDescription(),
+                'date' => $date,
+                'value' => $value
+            ];
+        }
+
+        return $allTransactions;
+    }
+
+    /**
+     * Retourne le dernier jour du mois $month $year
+     * @param int $year
+     * @param string $month
+     * @return DateTime
+     */
+    private function getLastDayOfMonth(int $year, string $month): DateTime
+    {
+        return (new DateTime("$year-$month-01"))->modify('last day of this month');
     }
 }
