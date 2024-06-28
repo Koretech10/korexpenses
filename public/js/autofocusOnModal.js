@@ -5,6 +5,6 @@
 function autofocusOnModal(modalId)
 {
     $(modalId).on('shown.bs.modal', function () {
-        $(modalId + ' input:first').trigger('focus')
+        $(modalId).find('input, select').first().trigger('focus')
     })
 }
