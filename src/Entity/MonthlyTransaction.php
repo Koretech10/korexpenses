@@ -35,6 +35,9 @@ class MonthlyTransaction
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $type = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $nextOccurrence = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,6 +99,18 @@ class MonthlyTransaction
     public function setType(int $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getNextOccurrence(): ?\DateTimeInterface
+    {
+        return $this->nextOccurrence;
+    }
+
+    public function setNextOccurrence(\DateTimeInterface $nextOccurrence): static
+    {
+        $this->nextOccurrence = $nextOccurrence;
 
         return $this;
     }
