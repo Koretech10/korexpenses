@@ -68,6 +68,21 @@ class MonthlyTransactionRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne les opérations mensuelles dont la date de prochaine occurrence a été atteinte
+     * @return QueryBuilder
+     */
+    public function getMonthlyTransactionsWithOccurrenceReached(): QueryBuilder
+    {
+        $now = new DateTime();
+
+        return $this
+            ->createQueryBuilder('mt')
+            ->where('mt.nextOccurrence <= :now')
+            ->setParameter('now', $now)
+        ;
+    }
+
+    /**
      * Retourne les opérations mensuelles filtrées selon la requête $filterQuery pour le compte bancaire $account
      * @param Account $account
      * @param array $filterQuery
