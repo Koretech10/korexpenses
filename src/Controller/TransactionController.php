@@ -10,7 +10,7 @@ use App\Form\TransactionType;
 use App\Repository\MonthlyTransactionRepository;
 use App\Repository\TransactionRepository;
 use App\Service\BalanceUpdaterService;
-use DateTime;
+use App\Service\MonthlyTransactionOccurrenceCalculatorService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -27,7 +27,8 @@ class TransactionController extends AbstractController
         private readonly TransactionRepository $transactionRepository,
         private readonly MonthlyTransactionRepository $monthlyTransactionRepository,
         private readonly PaginatorInterface $pager,
-        private readonly BalanceUpdaterService $balanceUpdater
+        private readonly BalanceUpdaterService $balanceUpdater,
+        private readonly MonthlyTransactionOccurrenceCalculatorService $occurrenceCalculator,
     ) {
     }
 
@@ -359,32 +360,20 @@ class TransactionController extends AbstractController
                 -$monthlyTransaction->getValue() :
                 $monthlyTransaction->getValue()
             ;
-            $dayWithLeadingZero = str_pad($monthlyTransaction->getDay(), 2, '0', STR_PAD_LEFT);
-            $date = checkdate((int) $month, $monthlyTransaction->getDay(), $year) ?
-                new DateTime("$year-$month-$dayWithLeadingZero") :
-                $this->getLastDayOfMonth($year, $month)
-            ;
 
             $allTransactions[] = [
                 'type' => MonthlyTransaction::class,
                 'id' => $monthlyTransaction->getId(),
                 'description' => $monthlyTransaction->getDescription(),
-                'date' => $date,
+                'date' => $this->occurrenceCalculator->calculateMonthlyTransactionOccurrence(
+                    $monthlyTransaction,
+                    $year,
+                    $month
+                ),
                 'value' => $value
             ];
         }
 
         return $allTransactions;
-    }
-
-    /**
-     * Retourne le dernier jour du mois $month $year
-     * @param int $year
-     * @param string $month
-     * @return DateTime
-     */
-    private function getLastDayOfMonth(int $year, string $month): DateTime
-    {
-        return (new DateTime("$year-$month-01"))->modify('last day of this month');
     }
 }

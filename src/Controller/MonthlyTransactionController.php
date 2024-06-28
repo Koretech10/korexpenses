@@ -7,6 +7,7 @@ use App\Entity\MonthlyTransaction;
 use App\Form\Filter\MonthlyTransactionFilterType;
 use App\Form\MonthlyTransactionType;
 use App\Repository\MonthlyTransactionRepository;
+use App\Service\MonthlyTransactionOccurrenceCalculatorService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class MonthlyTransactionController extends AbstractController
         private readonly EntityManagerInterface $em,
         private readonly PaginatorInterface $pager,
         private readonly MonthlyTransactionRepository $monthlyTransactionRepository,
+        private readonly MonthlyTransactionOccurrenceCalculatorService $occurrenceCalculator,
     ) {
     }
 
@@ -110,7 +112,11 @@ class MonthlyTransactionController extends AbstractController
         $newMonthlyTransactionForm->handleRequest($request);
 
         if ($newMonthlyTransactionForm->isSubmitted() && $newMonthlyTransactionForm->isValid()) {
+            /** @var MonthlyTransaction $monthlyTransaction */
             $monthlyTransaction = $newMonthlyTransactionForm->getData();
+            $monthlyTransaction->setNextOccurrence(
+                $this->occurrenceCalculator->calculateNextMonthlyTransactionOccurrence($monthlyTransaction)
+            );
 
             $this->em->persist($monthlyTransaction);
             $this->em->flush();
@@ -147,6 +153,9 @@ class MonthlyTransactionController extends AbstractController
         if ($monthlyTransactionForm->isSubmitted() && $monthlyTransactionForm->isValid()) {
             /** @var MonthlyTransaction $monthlyTransaction */
             $monthlyTransaction = $monthlyTransactionForm->getData();
+            $monthlyTransaction->setNextOccurrence(
+                $this->occurrenceCalculator->calculateNextMonthlyTransactionOccurrence($monthlyTransaction)
+            );
 
             $this->em->flush();
             $this->addFlash('success', 'Opération mensuelle modifiée avec succès.');

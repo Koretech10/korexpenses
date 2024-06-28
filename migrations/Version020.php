@@ -28,6 +28,7 @@ final class Version020 extends AbstractMigration
                 description VARCHAR(255) NOT NULL,
                 value DOUBLE PRECISION NOT NULL,
                 type SMALLINT NOT NULL,
+                next_occurrence DATE NOT NULL,
                 INDEX IDX_EF2C6F1E9B6B5FBA (account_id), PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         ');

@@ -31,12 +31,13 @@
             <thead class="thead-light">
             <tr>
                 <th>
-                    {{ knp_pagination_sortable(pagination, "Jour de l'occurrence", 'mt.day') }}
+                    {{ knp_pagination_sortable(pagination, "Jour de l'occur.", 'mt.day') }}
                 </th>
                 <th>
                     {{ knp_pagination_sortable(pagination, 'Libellé', 'mt.description') }}
                 </th>
                 <th>Valeur</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Prochaine occur.', 'mt.nextOccurrence') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -58,6 +59,7 @@
                             + {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
                         </td>
                     {% endif %}
+                    <td>{{ monthlyTransaction.nextOccurrence | date('d/m/Y') }}</td>
                 </tr>
             {% endfor %}
             </tbody>
