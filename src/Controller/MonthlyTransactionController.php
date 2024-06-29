@@ -199,4 +199,31 @@ class MonthlyTransactionController extends AbstractController
             'account' => $account->getId(),
         ]);
     }
+
+    /**
+     * Retourne un tableau avec les données de $monthlyTransactions
+     * @param array $monthlyTransactions
+     * @return array
+     */
+    private function monthlyTransactionsToArray(array $monthlyTransactions): array
+    {
+        $monthlyTransactionsArray = [];
+        foreach ($monthlyTransactions as $monthlyTransaction) {
+            /** @var MonthlyTransaction $monthlyTransaction */
+            $value = $monthlyTransaction->getType() === 0 ?
+                -$monthlyTransaction->getvalue() :
+                $monthlyTransaction->getValue()
+            ;
+
+            $monthlyTransactionsArray[] = [
+                'id' => $monthlyTransaction->getId(),
+                'day' => $monthlyTransaction->getDay(),
+                'description' => $monthlyTransaction->getDescription(),
+                'value' => $value,
+                'nextOccurrence' => $monthlyTransaction->getNextOccurrence(),
+            ];
+        }
+
+        return $monthlyTransactionsArray;
+    }
 }
