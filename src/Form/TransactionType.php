@@ -25,6 +25,7 @@ class TransactionType extends AbstractType
             ->add('date', DateType::class, [
                 'label' => 'Date',
                 'widget' => 'single_text',
+                // Choix par défaut à la création uniquement
                 'data' => $transaction->getDate() ?? $now,
             ])
             ->add('description', TextType::class, [
