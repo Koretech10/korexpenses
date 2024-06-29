@@ -69,9 +69,10 @@ class MonthlyTransactionController extends AbstractController
 
         // Pagination des opérations mensuelles demandées
         $pagination = $this->pager->paginate(
-            $monthlyTransactionQuery,
+            $this->monthlyTransactionsToArray($monthlyTransactionQuery->getQuery()->getResult()),
             $page,
-            100
+            100,
+            ['defaultSortFieldName' => '[day]']
         );
 
         return $this->render('monthly_transaction/list.html.twig', [
