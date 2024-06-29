@@ -31,18 +31,17 @@
             <thead class="thead-light">
             <tr>
                 <th>
-                    {{ knp_pagination_sortable(pagination, "Jour de l'occur.", 'mt.day') }}
+                    {{ knp_pagination_sortable(pagination, "Jour de l'occur.", '[day]') }}
                 </th>
                 <th>
-                    {{ knp_pagination_sortable(pagination, 'Libellé', 'mt.description') }}
+                    {{ knp_pagination_sortable(pagination, 'Libellé', '[description]') }}
                 </th>
-                <th>Valeur</th>
-                <th>{{ knp_pagination_sortable(pagination, 'Prochaine occur.', 'mt.nextOccurrence') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Valeur', '[value]') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'Prochaine occur.', '[nextOccurrence]') }}</th>
             </tr>
             </thead>
             <tbody>
             {% for monthlyTransaction in pagination %}
-                {# @var \App\Entity\MonthlyTransaction monthlyTransaction #}
                 <tr>
                     <td>{{ monthlyTransaction.day }} du mois</td>
                     <td>
@@ -50,13 +49,13 @@
                             {{ monthlyTransaction.description }}
                         </a>
                     </td>
-                    {% if monthlyTransaction.type == 0 %}
+                    {% if monthlyTransaction.value < 0 %}
                         <td class="text-danger text-nowrap">
-                            - {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
+                            {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
                         </td>
                     {% else %}
                         <td class="text-success text-nowrap">
-                            + {{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
+                            +{{ monthlyTransaction.value | format_number({fraction_digit: 2}) }} €
                         </td>
                     {% endif %}
                     <td>{{ monthlyTransaction.nextOccurrence | date('d/m/Y') }}</td>
@@ -134,4 +133,13 @@
         {% endblock %}
         {% block filterModalCancelPath %}{{ path('monthly_transaction_list', {'account': account.id}) }}{% endblock %}
     {% endembed %}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/autofocusOnModal.js') }}"></script>
+    <script>
+        // Autofocus des modals
+        autofocusOnModal('#createModal');
+        autofocusOnModal('#filterModal');
+    </script>
 {% endblock %}

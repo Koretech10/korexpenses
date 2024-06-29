@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Transaction;
+use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -17,12 +18,15 @@ class TransactionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $transaction = $builder->getData();
+        $now = new DateTime();
 
         $builder
             ->setAction($options['target_url'])
             ->add('date', DateType::class, [
                 'label' => 'Date',
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                // Choix par défaut à la création uniquement
+                'data' => $transaction->getDate() ?? $now,
             ])
             ->add('description', TextType::class, [
                 'label' => 'Libellé'

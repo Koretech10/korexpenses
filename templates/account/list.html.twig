@@ -88,3 +88,11 @@
         {% endblock %}
     {% endembed %}
 {% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/autofocusOnModal.js') }}"></script>
+    <script>
+        // Autofocus des modals
+        autofocusOnModal('#createModal');
+    </script>
+{% endblock %}
