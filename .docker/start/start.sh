@@ -5,6 +5,7 @@ sed -i "s/%DOMAIN_NAME%/$DOMAIN_NAME/g" /etc/apache2/sites-available/000-default
 
 # Remplacement des variables dans la conf de l'application
 sed -i "s/%APP_SECRET%/$APP_SECRET/g" /app/.env.prod.local
+sed -i "s/%REMEMBER_ME%/$REMEMBER_ME/g" /app/.env.prod.local
 sed -i "s/%DB_USER%/$DB_USER/g" /app/.env.prod.local
 sed -i "s/%DB_PASS%/$DB_PASS/g" /app/.env.prod.local
 sed -i "s/%DB_HOSTNAME%/$DB_HOSTNAME/g" /app/.env.prod.local
