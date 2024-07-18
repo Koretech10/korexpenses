@@ -52,5 +52,5 @@ COPY app/.env /app/.env
 COPY app/.env.prod.local /app/.env.prod.local
 
 # Copie du cron.daily
-COPY app/korexpenses.daily /etc/cron.daily/korexpenses
-RUN chmod +x /etc/cron.daily/korexpenses
+COPY app/korexpenses.daily /etc/cron.daily/01_korexpenses
+RUN chmod +x /etc/cron.daily/01_korexpenses
