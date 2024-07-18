@@ -25,7 +25,7 @@ RUN chmod +x /start.sh
 
 # Installation de packages
 RUN apt-get update \
- && apt-get upgrade \
+ && apt-get upgrade -y \
  && apt-get install -y git unzip zip  zlib1g-dev libicu-dev g++ apt-transport-https gnupg \
  && curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash \
  && apt-get install -y symfony-cli \
