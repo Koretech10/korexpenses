@@ -49,7 +49,7 @@ WORKDIR /app
 
 # Copie des fichiers d'environnement
 COPY app/.env /app/.env
-COPY app/.env.prod.local /app/.env.prod.local
+COPY app/.env.local /app/.env.local
 
 # Copie du cron.daily
 COPY app/korexpenses.daily /etc/cron.daily/01_korexpenses
