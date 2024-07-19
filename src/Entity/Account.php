@@ -29,9 +29,13 @@ class Account
     #[ORM\OneToMany(targetEntity: Transaction::class, mappedBy: 'account', orphanRemoval: true)]
     private Collection $transactions;
 
+    #[ORM\OneToMany(targetEntity: MonthlyTransaction::class, mappedBy: 'account', orphanRemoval: true)]
+    private Collection $monthlyTransactions;
+
     public function __construct()
     {
         $this->transactions = new ArrayCollection();
+        $this->monthlyTransactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,6 +91,36 @@ class Account
             // set the owning side to null (unless already changed)
             if ($transaction->getAccount() === $this) {
                 $transaction->setAccount(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MonthlyTransaction>
+     */
+    public function getMonthlyTransactions(): Collection
+    {
+        return $this->monthlyTransactions;
+    }
+
+    public function addMonthlyTransaction(MonthlyTransaction $monthlyTransaction): static
+    {
+        if (!$this->monthlyTransactions->contains($monthlyTransaction)) {
+            $this->monthlyTransactions->add($monthlyTransaction);
+            $monthlyTransaction->setAccount($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMonthlyTransaction(MonthlyTransaction $monthlyTransaction): static
+    {
+        if ($this->monthlyTransactions->removeElement($monthlyTransaction)) {
+            // set the owning side to null (unless already changed)
+            if ($monthlyTransaction->getAccount() === $this) {
+                $monthlyTransaction->setAccount(null);
             }
         }
 

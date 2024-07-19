@@ -21,6 +21,10 @@ $danger: $red;
 $light: $white;
 $dark: $gray-dark;
 
+.opacity-0 {
+  opacity: 0;
+}
+
 // Import de la feuille de style Bootstrap par défaut
 @import "~bootstrap/scss/bootstrap";
 

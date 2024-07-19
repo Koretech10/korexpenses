@@ -33,6 +33,7 @@ services:
     environment:
       DOMAIN_NAME: korexpenses.local
       APP_SECRET: thisI$ASup€rS3cret
+      REMEMBER_ME_FOR: 2592000 # 30 jours
       ROOT_PWD: "!R00tR00tR00tR00t!"
       DB_USER: korexpenses
       DB_PASS: korexpenses

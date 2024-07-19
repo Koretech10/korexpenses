@@ -39,7 +39,8 @@ class UserController extends AbstractController
         $pagination = $this->pager->paginate(
             $this->userRepository->getUsers(),
             $page,
-            100
+            100,
+            ['defaultSortFieldName' => 'u.username']
         );
 
         return $this->render('user/list.html.twig', [

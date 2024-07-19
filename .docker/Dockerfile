@@ -4,6 +4,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 ARG DOMAIN_NAME=localhost
 ARG APP_SECRET=insertSecretHere
+ARG REMEMBER_ME_FOR=2592000
 ARG ROOT_PWD=!R00tR00tR00tR00t!
 ARG DB_USER=korexpenses_user
 ARG DB_PASS=korexpenses_pass
@@ -24,7 +25,7 @@ RUN chmod +x /start.sh
 
 # Installation de packages
 RUN apt-get update \
- && apt-get upgrade \
+ && apt-get upgrade -y \
  && apt-get install -y git unzip zip  zlib1g-dev libicu-dev g++ apt-transport-https gnupg \
  && curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash \
  && apt-get install -y symfony-cli \
@@ -48,8 +49,8 @@ WORKDIR /app
 
 # Copie des fichiers d'environnement
 COPY app/.env /app/.env
-COPY app/.env.prod.local /app/.env.prod.local
+COPY app/.env.local /app/.env.local
 
 # Copie du cron.daily
-COPY app/korexpenses.daily /etc/cron.daily/korexpenses
-RUN chmod +x /etc/cron.daily/korexpenses
+COPY app/korexpenses.daily /etc/cron.daily/01_korexpenses
+RUN chmod +x /etc/cron.daily/01_korexpenses

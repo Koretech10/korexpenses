@@ -1,5 +1,6 @@
 // Import des bibliothèques
 const $ = require('jquery');
+global.$ = global.jQuery = $;
 require('popper.js');
 require('bootstrap');
 

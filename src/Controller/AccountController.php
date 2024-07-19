@@ -41,7 +41,8 @@ class AccountController extends AbstractController
         $pagination = $this->pager->paginate(
             $this->accountRepository->getAccounts(),
             $page,
-            100
+            100,
+            ['defaultSortFieldName' => 'a.name']
         );
 
         return $this->render('account/list.html.twig', [
