@@ -26,7 +26,7 @@ RUN chmod +x /start.sh
 # Installation de packages
 RUN apt-get update \
  && apt-get upgrade -y \
- && apt-get install -y git unzip zip  zlib1g-dev libicu-dev g++ apt-transport-https gnupg \
+ && apt-get install -y git unzip zip  zlib1g-dev libicu-dev g++ apt-transport-https gnupg cron \
  && curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash \
  && apt-get install -y symfony-cli \
  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
@@ -51,6 +51,5 @@ WORKDIR /app
 COPY app/.env /app/.env
 COPY app/.env.local /app/.env.local
 
-# Copie du cron.daily
-COPY app/korexpenses.daily /etc/cron.daily/01_korexpenses
-RUN chmod +x /etc/cron.daily/01_korexpenses
+# Copie du cron
+COPY conf/crontab /etc/crontab
