@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Horodatage début
+echo "$(date) - Début des tâches quotidiennes"
+
 # Se placer dans le dossier du script
 ROOTDIR=$(cd `dirname $0` && pwd)
 cd $ROOTDIR
@@ -12,3 +15,6 @@ symfony console balance:update
 
 # Nettoyage des fichiers temporaires
 rm -r ~/.symfony5/tmp/*
+
+# Horodatage fin
+echo "$(date) - Fin des taches quotidiennes"

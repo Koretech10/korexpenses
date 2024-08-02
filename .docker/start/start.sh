@@ -25,3 +25,6 @@ chown -R www-data: /app
 # Exécuter le script cron.daily
 chmod +x /app/cron.daily.sh
 /app/cron.daily.sh
+
+# Démarre le service Cron
+service cron start
