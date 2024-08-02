@@ -52,4 +52,4 @@ COPY app/.env /app/.env
 COPY app/.env.local /app/.env.local
 
 # Copie du cron
-COPY app/korexpenses /etc/cron.d/01_korexpenses
+COPY conf/crontab /etc/crontab
