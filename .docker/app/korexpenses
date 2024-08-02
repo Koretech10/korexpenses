@@ -1,0 +1,1 @@
+* * * * * root /app/cron.daily.sh | tee -a /app/var/log/cron.log

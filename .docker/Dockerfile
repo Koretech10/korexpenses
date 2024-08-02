@@ -51,6 +51,5 @@ WORKDIR /app
 COPY app/.env /app/.env
 COPY app/.env.local /app/.env.local
 
-# Copie du cron.daily
-COPY app/korexpenses.daily /etc/cron.daily/01_korexpenses
-RUN chmod +x /etc/cron.daily/01_korexpenses
+# Copie du cron
+COPY app/korexpenses /etc/cron.d/01_korexpenses
